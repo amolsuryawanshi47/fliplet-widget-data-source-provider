@@ -21,7 +21,7 @@ export default {
     }
   },
   methods: {
-    customDsSearch: function(params, data) {
+    customDataSourceSearch: function(params, data) {
       // If there are no search terms, return all of the data
       if (!params.term) {
         return data;
@@ -34,7 +34,7 @@ export default {
 
       const term = params.term.toLowerCase();
 
-      // Search when we get DSs for all aps
+      // Search when we get DataSources for all aps
       if (data.children) {
         const matchedChildren = data.children.filter(function(child) {
           const name = child.name.toLowerCase();
@@ -69,7 +69,7 @@ export default {
         templateResult: this.formatState,
         templateSelection: this.formatState,
         width: '100%',
-        matcher: this.customDsSearch,
+        matcher: this.customDataSourceSearch,
         dropdownAutoWidth: false
       });
     },
@@ -97,7 +97,7 @@ export default {
       });
     },
     formatState: function(state) {
-      if (state.id === 'none' || state.id === 'currentAppDSs' || state.id === 'otherDSs') {
+      if (state.id === 'none' || state.id === 'currentAppDataSources' || state.id === 'otherDataSources') {
         return $(
           '<span class="select2-value-holder">' + state.text + '</span>'
         );

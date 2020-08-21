@@ -8,13 +8,13 @@
     </div>
     <div v-else>
       <DataSourceSelector
-        :currentAppDSs="appDataSorces" :otherDSs="allDataSources"
+        :currentAppDataSources="appDataSources" :otherDataSources="allDataSources"
         :selectedDataSource="selectedDataSource"
         :changeDataSource="changeDataSource"
         :showAll="showAll"
         @selectedDataSourceId="selectedDataSourceId = $emit"
         @onDataSourceCreate="createDS"
-        @onShowAll="(event) => { showAllDSs(event) }"
+        @onShowAll="(event) => { showAllDataSources(event) }"
         @onDataSourceChange="changeDataSource = !changeDataSource"
       >
       </DataSourceSelector>
@@ -25,13 +25,12 @@
 
 <script>
 import DataSourceSelector from './components/DataSourceSelector';
-import { getDataSources, getDataSource } from './services/getDataSources';
-import { createDataSource } from './services/createDataSource';
+import { getDataSources, getDataSource, createDataSource } from './services/dataSource';
 
 export default {
   data() {
     return {
-      appDataSorces: [],
+      appDataSources: [],
       allDataSources: [],
       copyOfAllDataSources: [],
       isLoading: true,
@@ -47,7 +46,7 @@ export default {
     DataSourceSelector
   },
   methods: {
-    showAllDSs: function(isChecked) {
+    showAllDataSources: function(isChecked) {
       this.isLoading = true;
       this.showAll = isChecked;
 
@@ -90,7 +89,7 @@ export default {
         })
         .then(dataSources => {
           if (appId) {
-            this.appDataSorces = dataSources;
+            this.appDataSources = dataSources;
           } else {
             this.allDataSources = dataSources;
           }

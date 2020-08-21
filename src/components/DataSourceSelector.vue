@@ -2,9 +2,9 @@
   <section>
     <div v-if="dataSources.length && !selectedDataSource">
       <Select2 :dataSources="dataSources" :selectedDataSource="selectedDataSource" @selectDataSource="setDataSource"></Select2>
-      <span @click="showAllDSs" class="btn-link create-dataSource">Create new data source</span>
+      <span @click="showAllDataSources" class="btn-link create-dataSource">Create new data source</span>
       <div class="checkbox checkbox-icon">
-        <input @change="showAllDSs" :checked="showAll" type="checkbox" name="showAll" id="showAll" />
+        <input @change="showAllDataSources" :checked="showAll" type="checkbox" name="showAll" id="showAll" />
         <label for="showAll">
           <span class="check">
             <i class="fa fa-check"></i>
@@ -21,7 +21,7 @@
       <Select2 :dataSources="dataSources" :selectedDataSource="selectedDataSource" @selectDataSource="setDataSource"></Select2>
       <span @click="() => { this.$emit('onDataSourceCreate') }" class="btn-link create-dataSource">Create new data source</span>
       <div class="checkbox checkbox-icon">
-        <input @change="showAllDSs" :checked="showAll" type="checkbox" name="showAll" id="showAll" />
+        <input @change="showAllDataSources" :checked="showAll" type="checkbox" name="showAll" id="showAll" />
         <label for="showAll">
           <span class="check">
             <i class="fa fa-check"></i>
@@ -44,13 +44,13 @@ export default {
     };
   },
   props: {
-    currentAppDSs: {
+    currentAppDataSources: {
       type: Array,
       default() {
         return [];
       }
     },
-    otherDSs: {
+    otherDataSources: {
       type: Array,
       default() {
         return [];
@@ -72,39 +72,39 @@ export default {
     }
   },
   methods: {
-    showAllDSs: function() {
+    showAllDataSources: function() {
       this.$emit('onShowAll', !this.showAll);
       this.prepareData();
     },
     prepareData: function() {
-      // If otherDSs array is empty it means that we show user only ds's for current app
-      if (!this.otherDSs.length) {
-        return this.currentAppDSs;
+      // If otherDataSources array is empty it means that we show user only ds's for current app
+      if (!this.otherDataSources.length) {
+        return this.currentAppDataSources;
       }
 
       const groupedDataSources = [
         {
-          id: 'currentAppDSs',
+          id: 'currentAppDataSources',
           text: 'This app',
           name: 'currentApp',
           children: []
         },
         {
-          id: 'otherDSs',
+          id: 'otherDataSources',
           text: 'Other apps',
           name: 'otherApp',
           children: []
         }
       ];
 
-      groupedDataSources[0].children = this.currentAppDSs;
-      groupedDataSources[1].children = this.filterOtherAppsArray(this.otherDSs);
+      groupedDataSources[0].children = this.currentAppDataSources;
+      groupedDataSources[1].children = this.filterOtherAppsArray(this.otherDataSources);
 
       return groupedDataSources;
     },
     filterOtherAppsArray: function(filterDS) {
       return filterDS.filter(ds => {
-        return this.currentAppDSs.findIndex(currDS => currDS.id === ds.id) === -1;
+        return this.currentAppDataSources.findIndex(currDS => currDS.id === ds.id) === -1;
       });
     },
     setDataSource: function(dataSource) {
