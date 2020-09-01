@@ -122,20 +122,20 @@ export default {
         '<span class="select2-value-holder">' + state.name + ' <small>ID: ' + state.id + '</small></span>'
       );
     },
-    setSelectedDS: function(selectedDS) {
-      if (!selectedDS) {
+    setSelectedDataSource: function(selectedDataSource) {
+      if (!selectedDataSource) {
         return;
       }
 
       const $select2 = $(this.$refs.selectDatasource);
 
-      $select2.val(selectedDS.id).trigger('change');
+      $select2.val(selectedDataSource.id).trigger('change');
     }
   },
   mounted: function() {
     this.initSelect2();
     this.select2Listeners();
-    this.setSelectedDS(this.selectedDataSource);
+    this.setSelectedDataSource(this.selectedDataSource);
   },
   updated: function() {
   }

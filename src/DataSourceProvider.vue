@@ -8,12 +8,13 @@
     </div>
     <div v-else>
       <DataSourceSelector
-        :currentAppDataSources="appDataSources" :otherDataSources="allDataSources"
+        :currentAppDataSources="appDataSources"
+        :otherDataSources="allDataSources"
         :selectedDataSource="selectedDataSource"
         :changeDataSource="changeDataSource"
         :showAll="showAll"
         @selectedDataSourceId="selectedDataSourceId = $emit"
-        @onDataSourceCreate="createDS"
+        @onDataSourceCreate="createDataSource"
         @onShowAll="(event) => { showAllDataSources(event) }"
         @onDataSourceChange="changeDataSource = !changeDataSource"
       >
@@ -108,7 +109,7 @@ export default {
 
       this.loadDataSources(this.widgetData.appId);
     },
-    createDS: function() {
+    createDataSource: function() {
       this.isLoading = true;
 
       createDataSource(this.widgetData)

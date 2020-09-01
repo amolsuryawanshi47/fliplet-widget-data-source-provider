@@ -2,7 +2,7 @@
   <section>
     <div v-if="dataSources.length && !selectedDataSource">
       <Select2 :dataSources="dataSources" :selectedDataSource="selectedDataSource" @selectDataSource="setDataSource"></Select2>
-      <span @click="showAllDataSources" class="btn-link create-dataSource">Create new data source</span>
+      <span @click="onDataSourceCreate" class="btn-link create-dataSource">Create new data source</span>
       <div class="checkbox checkbox-icon">
         <input @change="showAllDataSources" :checked="showAll" type="checkbox" name="showAll" id="showAll" />
         <label for="showAll">
@@ -19,7 +19,7 @@
     </div>
     <div v-else-if="dataSources.length && selectedDataSource && changeDataSource">
       <Select2 :dataSources="dataSources" :selectedDataSource="selectedDataSource" @selectDataSource="setDataSource"></Select2>
-      <span @click="() => { this.$emit('onDataSourceCreate') }" class="btn-link create-dataSource">Create new data source</span>
+      <span @click="onDataSourceCreate" class="btn-link create-dataSource">Create new data source</span>
       <div class="checkbox checkbox-icon">
         <input @change="showAllDataSources" :checked="showAll" type="checkbox" name="showAll" id="showAll" />
         <label for="showAll">
@@ -77,12 +77,12 @@ export default {
       this.prepareData();
     },
     prepareData: function() {
-      // If otherDataSources array is empty it means that we show user only ds's for current app
+      // If otherDataSources array is empty it means that we show user only DataSources for current app
       if (!this.otherDataSources.length) {
         return this.currentAppDataSources;
       }
 
-      const groupedDataSources = [
+      const allDataSources = [
         {
           id: 'currentAppDataSources',
           text: 'This app',
@@ -97,15 +97,18 @@ export default {
         }
       ];
 
-      groupedDataSources[0].children = this.currentAppDataSources;
-      groupedDataSources[1].children = this.filterOtherAppsArray(this.otherDataSources);
+      allDataSources[0].children = this.currentAppDataSources;
+      allDataSources[1].children = this.filterOtherAppsArray(this.otherDataSources);
 
-      return groupedDataSources;
+      return allDataSources;
     },
-    filterOtherAppsArray: function(filterDS) {
-      return filterDS.filter(ds => {
-        return this.currentAppDataSources.findIndex(currDS => currDS.id === ds.id) === -1;
+    getOtherAppsDataSources: function(dataSources) {
+      return dataSources.filter(ds => {
+        return this.currentAppDataSources.findIndex(currDataSource => currDataSource.id === ds.id) === -1;
       });
+    },
+    onDataSourceCreate: function() {
+      this.$emit('onDataSourceCreate');
     },
     setDataSource: function(dataSource) {
       this.selectedDataSource = dataSource;

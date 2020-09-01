@@ -172,8 +172,8 @@ var render = function() {
           [
             _c("DataSourceSelector", {
               attrs: {
-                currentAppDSs: _vm.appDataSorces,
-                otherDSs: _vm.allDataSources,
+                currentAppDataSources: _vm.appDataSources,
+                otherDataSources: _vm.allDataSources,
                 selectedDataSource: _vm.selectedDataSource,
                 changeDataSource: _vm.changeDataSource,
                 showAll: _vm.showAll
@@ -182,9 +182,9 @@ var render = function() {
                 selectedDataSourceId: function($event) {
                   _vm.selectedDataSourceId = _vm.$emit
                 },
-                onDataSourceCreate: _vm.createDS,
+                onDataSourceCreate: _vm.createDataSource,
                 onShowAll: function(event) {
-                  _vm.showAllDSs(event)
+                  _vm.showAllDataSources(event)
                 },
                 onDataSourceChange: function($event) {
                   _vm.changeDataSource = !_vm.changeDataSource
@@ -219,8 +219,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6);
 /* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _components_DataSourceSelector__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(12);
-/* harmony import */ var _services_getDataSources__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(24);
-/* harmony import */ var _services_createDataSource__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(25);
+/* harmony import */ var _services_dataSource__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(24);
 
 //
 //
@@ -247,13 +246,13 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
-      appDataSorces: [],
+      appDataSources: [],
       allDataSources: [],
       copyOfAllDataSources: [],
       isLoading: true,
@@ -269,7 +268,7 @@ __webpack_require__.r(__webpack_exports__);
     DataSourceSelector: _components_DataSourceSelector__WEBPACK_IMPORTED_MODULE_1__["default"]
   },
   methods: {
-    showAllDSs: function showAllDSs(isChecked) {
+    showAllDataSources: function showAllDataSources(isChecked) {
       var _this = this;
 
       this.isLoading = true;
@@ -296,14 +295,14 @@ __webpack_require__.r(__webpack_exports__);
       var _this2 = this;
 
       this.isLoading = true;
-      Object(_services_getDataSources__WEBPACK_IMPORTED_MODULE_2__["getDataSources"])(appId).then(function (dataSources) {
+      Object(_services_dataSource__WEBPACK_IMPORTED_MODULE_2__["getDataSources"])(appId).then(function (dataSources) {
         if (_this2.widgetData.dataSourceId) {
           _this2.selectedDataSource = dataSources.find(function (dataSource) {
             return dataSource.id === _this2.widgetData.dataSourceId;
           });
 
           if (!_this2.selectedDataSource) {
-            return Object(_services_getDataSources__WEBPACK_IMPORTED_MODULE_2__["getDataSource"])(_this2.widgetData.dataSourceId).then(function (dataSorce) {
+            return Object(_services_dataSource__WEBPACK_IMPORTED_MODULE_2__["getDataSource"])(_this2.widgetData.dataSourceId).then(function (dataSorce) {
               _this2.selectedDataSource = dataSorce;
               dataSources.push(dataSorce);
               return dataSources;
@@ -314,7 +313,7 @@ __webpack_require__.r(__webpack_exports__);
         return dataSources;
       }).then(function (dataSources) {
         if (appId) {
-          _this2.appDataSorces = dataSources;
+          _this2.appDataSources = dataSources;
         } else {
           _this2.allDataSources = dataSources;
         }
@@ -330,11 +329,12 @@ __webpack_require__.r(__webpack_exports__);
       this.widgetData = Fliplet.Widget.getData();
       this.loadDataSources(this.widgetData.appId);
     },
-    createDS: function createDS() {
+    createDataSource: function createDataSource() {
       var _this3 = this;
 
       this.isLoading = true;
-      Object(_services_createDataSource__WEBPACK_IMPORTED_MODULE_3__["createDataSource"])(this.widgetData).then(function (dataSource) {
+
+      Object(_services_dataSource__WEBPACK_IMPORTED_MODULE_2__["createDataSource"])(this.widgetData).then(function (dataSource) {
         if (!dataSource) {
           return;
         }
@@ -514,7 +514,7 @@ var render = function() {
               "span",
               {
                 staticClass: "btn-link create-dataSource",
-                on: { click: _vm.showAllDSs }
+                on: { click: _vm.onDataSourceCreate }
               },
               [_vm._v("Create new data source")]
             ),
@@ -523,7 +523,7 @@ var render = function() {
               _c("input", {
                 attrs: { type: "checkbox", name: "showAll", id: "showAll" },
                 domProps: { checked: _vm.showAll },
-                on: { change: _vm.showAllDSs }
+                on: { change: _vm.showAllDataSources }
               }),
               _vm._v(" "),
               _vm._m(0)
@@ -581,11 +581,7 @@ var render = function() {
               "span",
               {
                 staticClass: "btn-link create-dataSource",
-                on: {
-                  click: function() {
-                    this$1.$emit("onDataSourceCreate")
-                  }
-                }
+                on: { click: _vm.onDataSourceCreate }
               },
               [_vm._v("Create new data source")]
             ),
@@ -594,7 +590,7 @@ var render = function() {
               _c("input", {
                 attrs: { type: "checkbox", name: "showAll", id: "showAll" },
                 domProps: { checked: _vm.showAll },
-                on: { change: _vm.showAllDSs }
+                on: { change: _vm.showAllDataSources }
               }),
               _vm._v(" "),
               _vm._m(1)
@@ -702,13 +698,13 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   props: {
-    currentAppDSs: {
+    currentAppDataSources: {
       type: Array,
       "default": function _default() {
         return [];
       }
     },
-    otherDSs: {
+    otherDataSources: {
       type: Array,
       "default": function _default() {
         return [];
@@ -730,39 +726,42 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   methods: {
-    showAllDSs: function showAllDSs() {
+    showAllDataSources: function showAllDataSources() {
       this.$emit('onShowAll', !this.showAll);
       this.prepareData();
     },
     prepareData: function prepareData() {
-      // If otherDSs array is empty it means that we show user only ds's for current app
-      if (!this.otherDSs.length) {
-        return this.currentAppDSs;
+      // If otherDataSources array is empty it means that we show user only DataSources for current app
+      if (!this.otherDataSources.length) {
+        return this.currentAppDataSources;
       }
 
-      var groupedDataSources = [{
-        id: 'currentAppDSs',
+      var allDataSources = [{
+        id: 'currentAppDataSources',
         text: 'This app',
         name: 'currentApp',
         children: []
       }, {
-        id: 'otherDSs',
+        id: 'otherDataSources',
         text: 'Other apps',
         name: 'otherApp',
         children: []
       }];
-      groupedDataSources[0].children = this.currentAppDSs;
-      groupedDataSources[1].children = this.filterOtherAppsArray(this.otherDSs);
-      return groupedDataSources;
+      allDataSources[0].children = this.currentAppDataSources;
+      allDataSources[1].children = this.filterOtherAppsArray(this.otherDataSources);
+      return allDataSources;
     },
-    filterOtherAppsArray: function filterOtherAppsArray(filterDS) {
+    getOtherAppsDataSources: function getOtherAppsDataSources(dataSources) {
       var _this = this;
 
-      return filterDS.filter(function (ds) {
-        return _this.currentAppDSs.findIndex(function (currDS) {
-          return currDS.id === ds.id;
+      return dataSources.filter(function (ds) {
+        return _this.currentAppDataSources.findIndex(function (currDataSource) {
+          return currDataSource.id === ds.id;
         }) === -1;
       });
+    },
+    onDataSourceCreate: function onDataSourceCreate() {
+      this.$emit('onDataSourceCreate');
     },
     setDataSource: function setDataSource(dataSource) {
       this.selectedDataSource = dataSource;
@@ -916,7 +915,7 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
     }
   },
   methods: {
-    customDsSearch: function customDsSearch(params, data) {
+    customDataSourceSearch: function customDataSourceSearch(params, data) {
       // If there are no search terms, return all of the data
       if (!params.term) {
         return data;
@@ -927,7 +926,7 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
         return null;
       }
 
-      var term = params.term.toLowerCase(); // Search when we get DSs for all aps
+      var term = params.term.toLowerCase(); // Search when we get DataSources for all aps
 
       if (data.children) {
         var matchedChildren = data.children.filter(function (child) {
@@ -962,7 +961,7 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
         templateResult: this.formatState,
         templateSelection: this.formatState,
         width: '100%',
-        matcher: this.customDsSearch,
+        matcher: this.customDataSourceSearch,
         dropdownAutoWidth: false
       });
     },
@@ -986,7 +985,7 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
       });
     },
     formatState: function formatState(state) {
-      if (state.id === 'none' || state.id === 'currentAppDSs' || state.id === 'otherDSs') {
+      if (state.id === 'none' || state.id === 'currentAppDataSources' || state.id === 'otherDataSources') {
         return $('<span class="select2-value-holder">' + state.text + '</span>');
       }
 
@@ -1004,19 +1003,19 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
       return $('<span class="select2-value-holder">' + state.name + ' <small>ID: ' + state.id + '</small></span>');
     },
-    setSelectedDS: function setSelectedDS(selectedDS) {
-      if (!selectedDS) {
+    setSelectedDataSource: function setSelectedDataSource(selectedDataSource) {
+      if (!selectedDataSource) {
         return;
       }
 
       var $select2 = $(this.$refs.selectDatasource);
-      $select2.val(selectedDS.id).trigger('change');
+      $select2.val(selectedDataSource.id).trigger('change');
     }
   },
   mounted: function mounted() {
     this.initSelect2();
     this.select2Listeners();
-    this.setSelectedDS(this.selectedDataSource);
+    this.setSelectedDataSource(this.selectedDataSource);
   },
   updated: function updated() {}
 });
@@ -1157,6 +1156,7 @@ function normalizeComponent (
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getDataSources", function() { return getDataSources; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getDataSource", function() { return getDataSource; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createDataSource", function() { return createDataSource; });
 var getDataSources = function getDataSources(appId) {
   var getOptions = appId ? {
     appId: appId
@@ -1166,14 +1166,6 @@ var getDataSources = function getDataSources(appId) {
 var getDataSource = function getDataSource(dataSourceId) {
   return Fliplet.DataSources.getById(dataSourceId);
 };
-
-/***/ }),
-/* 25 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createDataSource", function() { return createDataSource; });
 var createDataSource = function createDataSource(widgetData) {
   return Fliplet.Modal.prompt({
     title: 'Enter a name for the data source',
