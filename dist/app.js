@@ -728,9 +728,9 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     showAllDataSources: function showAllDataSources() {
       this.$emit('onShowAll', !this.showAll);
-      this.prepareData();
+      this.formatDataSources();
     },
-    prepareData: function prepareData() {
+    formatDataSources: function formatDataSources() {
       // If otherDataSources array is empty it means that we show user only DataSources for current app
       if (!this.otherDataSources.length) {
         return this.currentAppDataSources;
@@ -787,7 +787,7 @@ __webpack_require__.r(__webpack_exports__);
     Select2: _Select2__WEBPACK_IMPORTED_MODULE_0__["default"]
   },
   mounted: function mounted() {
-    this.dataSources = this.prepareData();
+    this.dataSources = this.formatDataSources();
   },
   updated: function updated() {
     Fliplet.Widget.autosize();

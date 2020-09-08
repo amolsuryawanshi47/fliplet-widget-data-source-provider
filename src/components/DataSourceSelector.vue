@@ -74,9 +74,9 @@ export default {
   methods: {
     showAllDataSources: function() {
       this.$emit('onShowAll', !this.showAll);
-      this.prepareData();
+      this.formatDataSources();
     },
-    prepareData: function() {
+    formatDataSources: function() {
       // If otherDataSources array is empty it means that we show user only DataSources for current app
       if (!this.otherDataSources.length) {
         return this.currentAppDataSources;
@@ -135,7 +135,7 @@ export default {
     Select2
   },
   mounted: function() {
-    this.dataSources = this.prepareData();
+    this.dataSources = this.formatDataSources();
   },
   updated: function() {
     Fliplet.Widget.autosize();
