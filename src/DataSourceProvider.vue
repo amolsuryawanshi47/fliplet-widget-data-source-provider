@@ -68,27 +68,43 @@ export default {
         this.isLoading = false;
       }, 100);
     },
+    loadSelectedDataSource: function() {
+      getDataSource(this.widgetData.dataSourceId)
+        .then(dataSource => {
+          this.selectedDataSource = dataSource;
+
+          Fliplet.Widget.emit('showColumns',
+            {
+              columns: this.selectedDataSource.columns,
+              id: this.selectedDataSource.id
+            }
+          );
+        })
+        .catch(err => {
+          this.errorMessage = Fliplet.parseError(err);
+          this.hasError = true;
+        })
+        .finally(() => {
+          this.isLoading = false;
+        });
+    },
     loadDataSources: function(appId) {
       this.isLoading = true;
 
+      if (this.widgetData.dataSourceId && !this.changeDataSource) {
+        return this.loadSelectedDataSource();
+      }
+
       getDataSources(appId)
         .then(dataSources => {
-          if (this.widgetData.dataSourceId) {
-            this.selectedDataSource = dataSources.find(dataSource => dataSource.id === this.widgetData.dataSourceId);
+          const selectedDataSourceInDataSources = dataSources.some(dataSource => {
+            return dataSource.id === this.selectedDataSource.id;
+          });
 
-            if (!this.selectedDataSource) {
-              return getDataSource(this.widgetData.dataSourceId)
-                .then(dataSorce => {
-                  this.selectedDataSource = dataSorce;
-                  dataSources.push(dataSorce);
-                  return dataSources;
-                });
-            }
+          if (!selectedDataSourceInDataSources) {
+            dataSources.push(this.selectedDataSource);
           }
 
-          return dataSources;
-        })
-        .then(dataSources => {
           if (appId) {
             this.appDataSources = dataSources;
           } else {

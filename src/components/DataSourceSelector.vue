@@ -13,9 +13,9 @@
         </label>
       </div>
     </div>
-    <div v-else-if="dataSources.length && selectedDataSource && !changeDataSource">
-      <p>{{ selectedDataSource.id }}. {{ selectedDataSource.name }} <span @click="() => { this.$emit('onDataSourceChange') }" class="btn-link change-dataSource">Change</span></p>
-      <div @click="viewDataSource" class="btn btn-default view-ds-btn">View data source</div>
+    <div v-else-if="selectedDataSource && !changeDataSource">
+      <p>{{ selectedDataSource.id }}. {{ selectedDataSource.name }} <span @click="onDataSourceChange" class="btn-link change-data-source">Change</span></p>
+      <div @click="viewDataSource" class="btn btn-default btn-view-data-source">View data source</div>
     </div>
     <div v-else-if="dataSources.length && selectedDataSource && changeDataSource">
       <Select2 :dataSources="dataSources" :selectedDataSource="selectedDataSource" @selectDataSource="setDataSource"></Select2>
@@ -77,7 +77,12 @@ export default {
       this.formatDataSources();
     },
     formatDataSources: function() {
-      // If otherDataSources array is empty it means that we show user only DataSources for current app
+      // If we have selected data source before
+      if (!this.currentAppDataSources.length) {
+        return [];
+      }
+
+      // If the otherDataSources array is empty it means that we show the user only data sources for the current app
       if (!this.otherDataSources.length) {
         return this.currentAppDataSources;
       }

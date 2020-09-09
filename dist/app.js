@@ -291,37 +291,50 @@ __webpack_require__.r(__webpack_exports__);
         _this.isLoading = false;
       }, 100);
     },
-    loadDataSources: function loadDataSources(appId) {
+    loadSelectedDataSource: function loadSelectedDataSource() {
       var _this2 = this;
 
-      this.isLoading = true;
-      Object(_services_dataSource__WEBPACK_IMPORTED_MODULE_2__["getDataSources"])(appId).then(function (dataSources) {
-        if (_this2.widgetData.dataSourceId) {
-          _this2.selectedDataSource = dataSources.find(function (dataSource) {
-            return dataSource.id === _this2.widgetData.dataSourceId;
-          });
-
-          if (!_this2.selectedDataSource) {
-            return Object(_services_dataSource__WEBPACK_IMPORTED_MODULE_2__["getDataSource"])(_this2.widgetData.dataSourceId).then(function (dataSorce) {
-              _this2.selectedDataSource = dataSorce;
-              dataSources.push(dataSorce);
-              return dataSources;
-            });
-          }
-        }
-
-        return dataSources;
-      }).then(function (dataSources) {
-        if (appId) {
-          _this2.appDataSources = dataSources;
-        } else {
-          _this2.allDataSources = dataSources;
-        }
+      Object(_services_dataSource__WEBPACK_IMPORTED_MODULE_2__["getDataSource"])(this.widgetData.dataSourceId).then(function (dataSource) {
+        _this2.selectedDataSource = dataSource;
+        Fliplet.Widget.emit('showColumns', {
+          columns: _this2.selectedDataSource.columns,
+          id: _this2.selectedDataSource.id
+        });
       })["catch"](function (err) {
-        _this2.hasError = true;
         _this2.errorMessage = Fliplet.parseError(err);
+        _this2.hasError = true;
       })["finally"](function () {
         _this2.isLoading = false;
+      });
+    },
+    loadDataSources: function loadDataSources(appId) {
+      var _this3 = this;
+
+      this.isLoading = true;
+
+      if (this.widgetData.dataSourceId && !this.changeDataSource) {
+        return this.loadSelectedDataSource();
+      }
+
+      Object(_services_dataSource__WEBPACK_IMPORTED_MODULE_2__["getDataSources"])(appId).then(function (dataSources) {
+        var selectedDataSourceInDataSources = dataSources.some(function (dataSource) {
+          return dataSource.id === _this3.selectedDataSource.id;
+        });
+
+        if (!selectedDataSourceInDataSources) {
+          dataSources.push(_this3.selectedDataSource);
+        }
+
+        if (appId) {
+          _this3.appDataSources = dataSources;
+        } else {
+          _this3.allDataSources = dataSources;
+        }
+      })["catch"](function (err) {
+        _this3.hasError = true;
+        _this3.errorMessage = Fliplet.parseError(err);
+      })["finally"](function () {
+        _this3.isLoading = false;
         Fliplet.Widget.autosize();
       });
     },
@@ -330,7 +343,7 @@ __webpack_require__.r(__webpack_exports__);
       this.loadDataSources(this.widgetData.appId);
     },
     createDataSource: function createDataSource() {
-      var _this3 = this;
+      var _this4 = this;
 
       this.isLoading = true;
 
@@ -339,12 +352,12 @@ __webpack_require__.r(__webpack_exports__);
           return;
         }
 
-        _this3.selectedDataSource = dataSource;
+        _this4.selectedDataSource = dataSource;
       })["catch"](function (err) {
-        _this3.hasError = true;
-        _this3.errorMessage = Fliplet.parseError(err);
+        _this4.hasError = true;
+        _this4.errorMessage = Fliplet.parseError(err);
       })["finally"](function () {
-        _this3.isLoading = false;
+        _this4.isLoading = false;
       });
     }
   },
@@ -493,7 +506,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
 var render = function() {
-  var this$1 = this
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
@@ -531,9 +543,7 @@ var render = function() {
           ],
           1
         )
-      : _vm.dataSources.length &&
-        _vm.selectedDataSource &&
-        !_vm.changeDataSource
+      : _vm.selectedDataSource && !_vm.changeDataSource
       ? _c("div", [
           _c("p", [
             _vm._v(
@@ -545,12 +555,8 @@ var render = function() {
             _c(
               "span",
               {
-                staticClass: "btn-link change-dataSource",
-                on: {
-                  click: function() {
-                    this$1.$emit("onDataSourceChange")
-                  }
-                }
+                staticClass: "btn-link change-data-source",
+                on: { click: _vm.onDataSourceChange }
               },
               [_vm._v("Change")]
             )
@@ -559,7 +565,7 @@ var render = function() {
           _c(
             "div",
             {
-              staticClass: "btn btn-default view-ds-btn",
+              staticClass: "btn btn-default btn-view-data-source",
               on: { click: _vm.viewDataSource }
             },
             [_vm._v("View data source")]
@@ -731,7 +737,12 @@ __webpack_require__.r(__webpack_exports__);
       this.formatDataSources();
     },
     formatDataSources: function formatDataSources() {
-      // If otherDataSources array is empty it means that we show user only DataSources for current app
+      // If we have selected data source before
+      if (!this.currentAppDataSources.length) {
+        return [];
+      } // If the otherDataSources array is empty it means that we show the user only data sources for the current app
+
+
       if (!this.otherDataSources.length) {
         return this.currentAppDataSources;
       }
