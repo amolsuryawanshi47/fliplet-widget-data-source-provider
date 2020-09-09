@@ -13,8 +13,6 @@
       "fliplet-studio-ui"
     ],
     "assets": [
-      "vendor/select2.css",
-      "vendor/select2.full.js",
       "dist/css/index.css",
       "dist/app.js"
     ]
