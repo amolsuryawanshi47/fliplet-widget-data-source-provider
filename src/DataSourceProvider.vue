@@ -25,13 +25,13 @@
             :optionLabelKey="'name'"
             :optionValueKey="'id'"
             :selectWithGroups="!!allDataSources.length"
-            @selectDataSource="setDataSource">
+            @onSelect="setDataSource">
           </Select2>
 
-          <span @click="onDataSourceCreate" class="btn-link create-data-source">Create new data source</span>
+          <a @click.prevent="onDataSourceCreate" class="create-data-source" href="#">Create new data source</a>
 
           <div class="checkbox checkbox-icon">
-            <input @change="showAllDataSources" :checked="showAll" type="checkbox" name="showAll" id="showAll" />
+            <input :checked="showAll" type="checkbox" name="showAll" id="showAll" />
             <label for="showAll">
               <span class="check">
                 <i class="fa fa-check"></i>
@@ -43,7 +43,7 @@
         </div>
 
         <div v-else-if="selectedDataSource && !changeDataSource">
-          <p>{{ selectedDataSource.id }}. {{ selectedDataSource.name }} <span @click="onDataSourceChange" class="btn-link change-data-source">Change</span></p>
+          <p>{{ selectedDataSource.id }}. {{ selectedDataSource.name }} <a @click.prevent="onDataSourceChange" class=" change-data-source">Change</a></p>
         </div>
 
         <div v-show="selectedDataSource" @click="viewDataSource" class="btn btn-default btn-view-data-source">View data source</div>
@@ -86,7 +86,7 @@ export default {
     };
   },
   methods: {
-    onDataSourceSelect: function(dataSource) {
+    onDataSourceSelect(dataSource) {
       this.selectedDataSource = dataSource;
     },
     initProvider() {
@@ -98,7 +98,7 @@ export default {
 
       this.loadDataSources(this.widgetData.appId);
     },
-    onAddDefaultSecurity: function() {
+    onAddDefaultSecurity() {
       this.isLoading = true;
       this.selectedDataSource.accessRules = this.widgetData.accessRules;
 
@@ -160,27 +160,6 @@ export default {
         .finally(() => {
           this.isLoading = false;
         });
-    },
-    showAllDataSources: function(event) {
-      this.isLoading = true;
-      this.showAll = event.target.checked;
-
-      if (this.showAll) {
-        if (!this.copyOfAllDataSources.length) {
-          this.loadDataSources();
-          return;
-        }
-
-        this.allDataSources = [...this.copyOfAllDataSources];
-      } else {
-        this.copyOfAllDataSources = [...this.allDataSources];
-        this.allDataSources = [];
-      }
-
-      // Give VUE time to reset templates
-      this.$nextTick(() => {
-        this.isLoading = false;
-      });
     },
     loadSelectedDataSource: function() {
       getDataSource(this.widgetData.dataSourceId)
@@ -354,15 +333,37 @@ export default {
   mounted: function() {
     this.initProvider();
 
-    const $vm = this;
-
     // Transfer selected DataSource id to the parent
-    Fliplet.Widget.onSaveRequest(function() {
-      Fliplet.Widget.save({id: $vm.selectedDataSource ? $vm.selectedDataSource.id : undefined});
+    Fliplet.Widget.onSaveRequest(() => {
+      Fliplet.Widget.save({ id: this.selectedDataSource ? this.selectedDataSource.id : undefined });
     });
   },
   updated: function() {
     Fliplet.Widget.autosize();
+  },
+  watch: {
+    showAll: {
+      handler: function(value) {
+        this.isLoading = true;
+
+        if (value) {
+          if (!this.copyOfAllDataSources.length) {
+            this.loadDataSources();
+            return;
+          }
+
+          this.allDataSources = [...this.copyOfAllDataSources];
+        } else {
+          this.copyOfAllDataSources = [...this.allDataSources];
+          this.allDataSources = [];
+        }
+
+        // Give VUE time to reset templates
+        this.$nextTick(() => {
+          this.isLoading = false;
+        });
+      }
+    }
   }
 };
 </script>

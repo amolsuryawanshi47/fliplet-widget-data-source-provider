@@ -1,7 +1,7 @@
 <template>
   <section>
     <div ref="select" class="select" @click="() => { toggleSelect() }">
-      <span class="select-holder">{{ selectedOption || '-- Select data source' }}</span>
+      <span class="select-holder">{{ setedOption || '-- Select an option' }}</span>
     </div>
     <div class="options">
       <div class="search">
@@ -34,7 +34,7 @@
 <script>
 export default {
   props: {
-    dataSources: {
+    options: {
       type: Array,
       default() {
         return [];
@@ -48,7 +48,7 @@ export default {
       type: Function,
       default: null
     },
-    selectedDataSource: {
+    selectedOption: {
       type: Number
     },
     optionValueKey: {
@@ -66,7 +66,7 @@ export default {
   },
   data() {
     return {
-      selectedOption: '',
+      setedOption: '',
       selectOptions: [],
       allOptions: [],
       searchValue: ''
@@ -81,8 +81,8 @@ export default {
       }
     },
     setOption: function(value, init) {
-      this.selectedOption = this.getSelectedOptionLabel(value);
-      this.$emit('selectDataSource', value);
+      this.setedOption = this.getSelectedOptionLabel(value);
+      this.$emit('onSelect', value);
       this.toggleSelect(init);
     },
     getSelectedOptionValue: function(value) {
@@ -130,9 +130,9 @@ export default {
       });
     },
     initSelect2: function() {
-      this.allOptions = [...this.dataSources];
+      this.allOptions = [...this.options];
       this.search();
-      this.setOption(this.selectedDataSource, true);
+      this.setOption(this.selectedOption, true);
     }
   },
   mounted: function() {

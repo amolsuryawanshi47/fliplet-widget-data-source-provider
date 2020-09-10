@@ -1,5 +1,5 @@
 export const getDataSources = (appId) => {
-  const getOptions = appId ? {appId: appId} : {};
+  const getOptions = appId ? {appId: appId } : {};
 
   return Fliplet.DataSources.get(getOptions);
 };
@@ -8,30 +8,30 @@ export const getDataSource = (dataSourceId) => {
   return Fliplet.DataSources.getById(dataSourceId);
 };
 
-export const createDataSource = (widgetData) => {
+export const createDataSource = (data) => {
   return Fliplet.Modal.prompt({
     title: 'Enter a name for the data source',
-    default: widgetData.default.name
+    default: data.default.name || ''
   })
     .then(dataSourceName => {
       if (dataSourceName === null) {
-        return false;
+        return;
       }
 
       if (!dataSourceName) {
-        Fliplet.Modal.alert({
+        return Fliplet.Modal.alert({
           message: 'Data source name can\'t be empty. Plaese enter data source name again.'
         })
           .then(() => {
-            createDataSource();
+            return createDataSource();
           });
       }
 
       return Fliplet.DataSources.create({
         name: dataSourceName,
-        appId: widgetData.appId,
-        entries: widgetData.defaults.entries.entries,
-        columns: widgetData.defaults.entries.columns
+        appId: data.appId,
+        entries: data.defaults.entries,
+        columns: data.defaults.columns
       });
     });
 };

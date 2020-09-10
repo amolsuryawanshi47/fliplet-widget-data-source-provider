@@ -189,14 +189,20 @@ var render = function() {
                         optionValueKey: "id",
                         selectWithGroups: !!_vm.allDataSources.length
                       },
-                      on: { selectDataSource: _vm.setDataSource }
+                      on: { onSelect: _vm.setDataSource }
                     }),
                     _vm._v(" "),
                     _c(
-                      "span",
+                      "a",
                       {
-                        staticClass: "btn-link create-data-source",
-                        on: { click: _vm.onDataSourceCreate }
+                        staticClass: "create-data-source",
+                        attrs: { href: "#" },
+                        on: {
+                          click: function($event) {
+                            $event.preventDefault()
+                            return _vm.onDataSourceCreate($event)
+                          }
+                        }
                       },
                       [_vm._v("Create new data source")]
                     ),
@@ -208,8 +214,7 @@ var render = function() {
                           name: "showAll",
                           id: "showAll"
                         },
-                        domProps: { checked: _vm.showAll },
-                        on: { change: _vm.showAllDataSources }
+                        domProps: { checked: _vm.showAll }
                       }),
                       _vm._v(" "),
                       _vm._m(0)
@@ -227,10 +232,15 @@ var render = function() {
                         " "
                     ),
                     _c(
-                      "span",
+                      "a",
                       {
-                        staticClass: "btn-link change-data-source",
-                        on: { click: _vm.onDataSourceChange }
+                        staticClass: " change-data-source",
+                        on: {
+                          click: function($event) {
+                            $event.preventDefault()
+                            return _vm.onDataSourceChange($event)
+                          }
+                        }
                       },
                       [_vm._v("Change")]
                     )
@@ -505,67 +515,44 @@ __webpack_require__.r(__webpack_exports__);
         _this2.isLoading = false;
       });
     },
-    showAllDataSources: function showAllDataSources(event) {
+    loadSelectedDataSource: function loadSelectedDataSource() {
       var _this3 = this;
 
-      this.isLoading = true;
-      this.showAll = event.target.checked;
-
-      if (this.showAll) {
-        if (!this.copyOfAllDataSources.length) {
-          this.loadDataSources();
-          return;
-        }
-
-        this.allDataSources = _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default()(this.copyOfAllDataSources);
-      } else {
-        this.copyOfAllDataSources = _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default()(this.allDataSources);
-        this.allDataSources = [];
-      } // Give VUE time to reset templates
-
-
-      this.$nextTick(function () {
+      Object(_services_dataSource__WEBPACK_IMPORTED_MODULE_2__["getDataSource"])(this.widgetData.dataSourceId).then(function (dataSource) {
+        _this3.selectedDataSource = dataSource;
+        Fliplet.Widget.emit('showColumns', {
+          columns: _this3.selectedDataSource.columns,
+          id: _this3.selectedDataSource.id
+        });
+      })["catch"](function (err) {
+        _this3.errorMessage = Fliplet.parseError(err);
+        _this3.hasError = true;
+      })["finally"](function () {
         _this3.isLoading = false;
       });
     },
-    loadSelectedDataSource: function loadSelectedDataSource() {
-      var _this4 = this;
-
-      Object(_services_dataSource__WEBPACK_IMPORTED_MODULE_2__["getDataSource"])(this.widgetData.dataSourceId).then(function (dataSource) {
-        _this4.selectedDataSource = dataSource;
-        Fliplet.Widget.emit('showColumns', {
-          columns: _this4.selectedDataSource.columns,
-          id: _this4.selectedDataSource.id
-        });
-      })["catch"](function (err) {
-        _this4.errorMessage = Fliplet.parseError(err);
-        _this4.hasError = true;
-      })["finally"](function () {
-        _this4.isLoading = false;
-      });
-    },
     loadDataSources: function loadDataSources(appId) {
-      var _this5 = this;
+      var _this4 = this;
 
       Object(_services_dataSource__WEBPACK_IMPORTED_MODULE_2__["getDataSources"])(appId).then(function (dataSources) {
         var selectedDataSourceInDataSources = dataSources.some(function (dataSource) {
-          return dataSource.id === _this5.selectedDataSource.id;
+          return dataSource.id === _this4.selectedDataSource.id;
         });
 
         if (!selectedDataSourceInDataSources) {
-          dataSources.push(_this5.selectedDataSource);
+          dataSources.push(_this4.selectedDataSource);
         }
 
         if (appId) {
-          _this5.appDataSources = _this5.formatDataSources(dataSources);
+          _this4.appDataSources = _this4.formatDataSources(dataSources);
         } else {
-          _this5.allDataSources = _this5.formatDataSources(dataSources);
+          _this4.allDataSources = _this4.formatDataSources(dataSources);
         }
       })["catch"](function (err) {
-        _this5.hasError = true;
-        _this5.errorMessage = Fliplet.parseError(err);
+        _this4.hasError = true;
+        _this4.errorMessage = Fliplet.parseError(err);
       })["finally"](function () {
-        _this5.isLoading = false;
+        _this4.isLoading = false;
         Fliplet.Widget.autosize();
       });
     },
@@ -592,10 +579,10 @@ __webpack_require__.r(__webpack_exports__);
       return allDataSources;
     },
     getOtherAppsDataSources: function getOtherAppsDataSources(dataSources) {
-      var _this6 = this;
+      var _this5 = this;
 
       return dataSources.filter(function (dataSource) {
-        return _this6.currentAppDataSources.findIndex(function (currDS) {
+        return _this5.currentAppDataSources.findIndex(function (currDS) {
           return currDS.id === dataSource.id;
         }) === -1;
       });
@@ -691,17 +678,44 @@ __webpack_require__.r(__webpack_exports__);
     Select2: _components_Select2_vue__WEBPACK_IMPORTED_MODULE_1__["default"]
   },
   mounted: function mounted() {
-    this.initProvider();
-    var $vm = this; // Transfer selected DataSource id to the parent
+    var _this6 = this;
+
+    this.initProvider(); // Transfer selected DataSource id to the parent
 
     Fliplet.Widget.onSaveRequest(function () {
       Fliplet.Widget.save({
-        id: $vm.selectedDataSource ? $vm.selectedDataSource.id : undefined
+        id: _this6.selectedDataSource ? _this6.selectedDataSource.id : undefined
       });
     });
   },
   updated: function updated() {
     Fliplet.Widget.autosize();
+  },
+  watch: {
+    showAll: {
+      handler: function handler(value) {
+        var _this7 = this;
+
+        this.isLoading = true;
+
+        if (value) {
+          if (!this.copyOfAllDataSources.length) {
+            this.loadDataSources();
+            return;
+          }
+
+          this.allDataSources = _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default()(this.copyOfAllDataSources);
+        } else {
+          this.copyOfAllDataSources = _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default()(this.allDataSources);
+          this.allDataSources = [];
+        } // Give VUE time to reset templates
+
+
+        this.$nextTick(function () {
+          _this7.isLoading = false;
+        });
+      }
+    }
   }
 });
 
@@ -859,7 +873,7 @@ var render = function() {
       },
       [
         _c("span", { staticClass: "select-holder" }, [
-          _vm._v(_vm._s(_vm.selectedOption || "-- Select data source"))
+          _vm._v(_vm._s(_vm.setedOption || "-- Select an option"))
         ])
       ]
     ),
@@ -1032,7 +1046,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
-    dataSources: {
+    options: {
       type: Array,
       "default": function _default() {
         return [];
@@ -1046,7 +1060,7 @@ __webpack_require__.r(__webpack_exports__);
       type: Function,
       "default": null
     },
-    selectedDataSource: {
+    selectedOption: {
       type: Number
     },
     optionValueKey: {
@@ -1064,7 +1078,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
-      selectedOption: '',
+      setedOption: '',
       selectOptions: [],
       allOptions: [],
       searchValue: ''
@@ -1078,8 +1092,8 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     setOption: function setOption(value, init) {
-      this.selectedOption = this.getSelectedOptionLabel(value);
-      this.$emit('selectDataSource', value);
+      this.setedOption = this.getSelectedOptionLabel(value);
+      this.$emit('onSelect', value);
       this.toggleSelect(init);
     },
     getSelectedOptionValue: function getSelectedOptionValue(value) {
@@ -1128,9 +1142,9 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     initSelect2: function initSelect2() {
-      this.allOptions = _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default()(this.dataSources);
+      this.allOptions = _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default()(this.options);
       this.search();
-      this.setOption(this.selectedDataSource, true);
+      this.setOption(this.selectedOption, true);
     }
   },
   mounted: function mounted() {
@@ -1263,28 +1277,28 @@ var getDataSources = function getDataSources(appId) {
 var getDataSource = function getDataSource(dataSourceId) {
   return Fliplet.DataSources.getById(dataSourceId);
 };
-var createDataSource = function createDataSource(widgetData) {
+var createDataSource = function createDataSource(data) {
   return Fliplet.Modal.prompt({
     title: 'Enter a name for the data source',
-    "default": widgetData["default"].name
+    "default": data["default"].name || ''
   }).then(function (dataSourceName) {
     if (dataSourceName === null) {
       return false;
     }
 
     if (!dataSourceName) {
-      Fliplet.Modal.alert({
+      return Fliplet.Modal.alert({
         message: 'Data source name can\'t be empty. Plaese enter data source name again.'
       }).then(function () {
-        createDataSource();
+        return createDataSource();
       });
     }
 
     return Fliplet.DataSources.create({
       name: dataSourceName,
-      appId: widgetData.appId,
-      entries: widgetData.defaults.entries.entries,
-      columns: widgetData.defaults.entries.columns
+      appId: data.appId,
+      entries: data.defaults.entries,
+      columns: data.defaults.columns
     });
   });
 };
