@@ -232,12 +232,8 @@ var render = function() {
               : _vm.selectedDataSource && !_vm.changeDataSource
               ? _c("div", [
                   _c("p", [
-                    _vm._v(
-                      _vm._s(_vm.selectedDataSource.id) +
-                        ". " +
-                        _vm._s(_vm.selectedDataSource.name) +
-                        " "
-                    ),
+                    _c("code", [_vm._v(_vm._s(_vm.selectedDataSource.id))]),
+                    _vm._v(" " + _vm._s(_vm.selectedDataSource.name) + " "),
                     _c(
                       "a",
                       {
