@@ -68,7 +68,6 @@ export default {
     return {
       setedOption: '',
       selectOptions: [],
-      allOptions: [],
       searchValue: ''
     };
   },
@@ -101,7 +100,7 @@ export default {
     },
     search: function() {
       if (this.customSearch) {
-        this.selectOptions = this.allOptions.filter(option => {
+        this.selectOptions = this.options.filter(option => {
           return this.customSearch(this.searchValue, option);
         });
 
@@ -121,16 +120,15 @@ export default {
       this.selectOptions = [];
 
       if (!value) {
-        this.selectOptions = [...this.allOptions];
+        this.selectOptions = [...this.options];
         return;
       }
 
-      this.selectOptions = this.allOptions.filter((option) => {
+      this.selectOptions = this.options.filter((option) => {
         return option.indexOf(value) !== -1;
       });
     },
     initSelect2: function() {
-      this.allOptions = [...this.options];
       this.search();
       this.setOption(this.selectedOption, true);
     }

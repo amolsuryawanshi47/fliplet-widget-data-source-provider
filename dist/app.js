@@ -189,7 +189,14 @@ var render = function() {
                         optionValueKey: "id",
                         selectWithGroups: !!_vm.allDataSources.length
                       },
-                      on: { onSelect: _vm.setDataSource }
+                      on: {
+                        "update:selectedDataSource": function($event) {
+                          _vm.selectedDataSource = $event
+                        },
+                        "update:selected-data-source": function($event) {
+                          _vm.selectedDataSource = $event
+                        }
+                      }
                     }),
                     _vm._v(" "),
                     _c(
@@ -234,7 +241,7 @@ var render = function() {
                     _c(
                       "a",
                       {
-                        staticClass: " change-data-source",
+                        staticClass: "change-data-source",
                         on: {
                           click: function($event) {
                             $event.preventDefault()
@@ -520,7 +527,7 @@ __webpack_require__.r(__webpack_exports__);
 
       Object(_services_dataSource__WEBPACK_IMPORTED_MODULE_2__["getDataSource"])(this.widgetData.dataSourceId).then(function (dataSource) {
         _this3.selectedDataSource = dataSource;
-        Fliplet.Widget.emit('showColumns', {
+        Fliplet.Widget.emit('dataSourceSelect', {
           columns: _this3.selectedDataSource.columns,
           id: _this3.selectedDataSource.id
         });
@@ -614,11 +621,10 @@ __webpack_require__.r(__webpack_exports__);
     setDataSource: function setDataSource(dataSource) {
       if (dataSource) {
         this.selectedDataSource = dataSource;
-        Fliplet.Widget.emit('showColumns', {
+        Fliplet.Widget.emit('dataSourceSelect', {
           columns: dataSource.columns,
           id: dataSource.id
         });
-        this.$emit('onDataSourceSelect', dataSource);
       }
     },
     sortDataSourceEntries: function sortDataSourceEntries(dataSources) {
@@ -1080,7 +1086,6 @@ __webpack_require__.r(__webpack_exports__);
     return {
       setedOption: '',
       selectOptions: [],
-      allOptions: [],
       searchValue: ''
     };
   },
@@ -1114,7 +1119,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       if (this.customSearch) {
-        this.selectOptions = this.allOptions.filter(function (option) {
+        this.selectOptions = this.options.filter(function (option) {
           return _this.customSearch(_this.searchValue, option);
         });
         return;
@@ -1133,16 +1138,15 @@ __webpack_require__.r(__webpack_exports__);
       this.selectOptions = [];
 
       if (!value) {
-        this.selectOptions = _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default()(this.allOptions);
+        this.selectOptions = _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default()(this.options);
         return;
       }
 
-      this.selectOptions = this.allOptions.filter(function (option) {
+      this.selectOptions = this.options.filter(function (option) {
         return option.indexOf(value) !== -1;
       });
     },
     initSelect2: function initSelect2() {
-      this.allOptions = _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default()(this.options);
       this.search();
       this.setOption(this.selectedOption, true);
     }
@@ -1283,7 +1287,7 @@ var createDataSource = function createDataSource(data) {
     "default": data["default"].name || ''
   }).then(function (dataSourceName) {
     if (dataSourceName === null) {
-      return false;
+      return;
     }
 
     if (!dataSourceName) {

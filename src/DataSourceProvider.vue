@@ -19,13 +19,13 @@
 
           <Select2
             :dataSources="dataSources"
-            :selectedDataSource="selectedDataSource"
+            :selectedDataSource.sync="selectedDataSource"
             :customOptionView="formatDataSourceOption"
             :customSearch="customDataSourceSearch"
             :optionLabelKey="'name'"
             :optionValueKey="'id'"
             :selectWithGroups="!!allDataSources.length"
-            @onSelect="setDataSource">
+          >
           </Select2>
 
           <a @click.prevent="onDataSourceCreate" class="create-data-source" href="#">Create new data source</a>
@@ -43,7 +43,7 @@
         </div>
 
         <div v-else-if="selectedDataSource && !changeDataSource">
-          <p>{{ selectedDataSource.id }}. {{ selectedDataSource.name }} <a @click.prevent="onDataSourceChange" class=" change-data-source">Change</a></p>
+          <p>{{ selectedDataSource.id }}. {{ selectedDataSource.name }} <a @click.prevent="onDataSourceChange" class="change-data-source">Change</a></p>
         </div>
 
         <div v-show="selectedDataSource" @click="viewDataSource" class="btn btn-default btn-view-data-source">View data source</div>
@@ -116,7 +116,7 @@ export default {
           this.isLoading = false;
         });
     },
-    hasAccessRules: function() {
+    hasAccessRules() {
       if (!this.selectedDataSource) {
         this.securityEnabled = false;
         return;
@@ -129,14 +129,14 @@ export default {
 
       this.securityEnabled = true;
     },
-    onDataSourceChange: function() {
+    onDataSourceChange() {
       this.changeDataSource = !this.changeDataSource;
 
       if (!this.appDataSources.length) {
         this.loadDataSources(this.widgetData.appId);
       }
     },
-    onDataSourceCreate: function() {
+    onDataSourceCreate() {
       this.isLoading = true;
 
       createDataSource(this.widgetData)
@@ -161,12 +161,12 @@ export default {
           this.isLoading = false;
         });
     },
-    loadSelectedDataSource: function() {
+    loadSelectedDataSource() {
       getDataSource(this.widgetData.dataSourceId)
         .then(dataSource => {
           this.selectedDataSource = dataSource;
 
-          Fliplet.Widget.emit('showColumns',
+          Fliplet.Widget.emit('dataSourceSelect',
             {
               columns: this.selectedDataSource.columns,
               id: this.selectedDataSource.id
@@ -181,7 +181,7 @@ export default {
           this.isLoading = false;
         });
     },
-    loadDataSources: function(appId) {
+    loadDataSources(appId) {
       getDataSources(appId)
         .then(dataSources => {
           const selectedDataSourceInDataSources = dataSources.some(dataSource => {
@@ -207,7 +207,7 @@ export default {
           Fliplet.Widget.autosize();
         });
     },
-    formatDataSources: function() {
+    formatDataSources() {
       // If we have selected data source before
       if (!this.appDataSources.length) {
         return [];
@@ -234,17 +234,17 @@ export default {
 
       return allDataSources;
     },
-    getOtherAppsDataSources: function(dataSources) {
+    getOtherAppsDataSources(dataSources) {
       return dataSources.filter(dataSource => {
         return this.currentAppDataSources.findIndex(currDS => currDS.id === dataSource.id) === -1;
       });
     },
-    formatDataSourceOption: function(data) {
+    formatDataSourceOption(data) {
       const { id, name, text } = data;
 
       return `${name || text} ID: ${id}`;
     },
-    customDataSourceSearch: function(condition, data) {
+    customDataSourceSearch(condition, data) {
       // Return of this function should be the same as the array.filter function
       // If there are no search terms, return all of the data
       if (!condition) {
@@ -263,19 +263,17 @@ export default {
       // Return `false` if the term should not be displayed
       return false;
     },
-    setDataSource: function(dataSource) {
+    setDataSource(dataSource) {
       if (dataSource) {
         this.selectedDataSource = dataSource;
 
-        Fliplet.Widget.emit('showColumns', {
+        Fliplet.Widget.emit('dataSourceSelect', {
           columns: dataSource.columns,
           id: dataSource.id
         });
-
-        this.$emit('onDataSourceSelect', dataSource);
       }
     },
-    sortDataSourceEntries: function(dataSources) {
+    sortDataSourceEntries(dataSources) {
       const copyDataSources = [...dataSources];
 
       if (copyDataSources[0].options) {
@@ -287,7 +285,7 @@ export default {
 
       return copyDataSources;
     },
-    sortArray: function(a, b) {
+    sortArray(a, b) {
       // Sort data source array by name
       // Send names that starts with number to the end of the list
       const startsWithAlphabet = /^[A-Z,a-z]/;
@@ -311,7 +309,7 @@ export default {
 
       return 0;
     },
-    viewDataSource: function() {
+    viewDataSource() {
       Fliplet.Studio.emit('overlay', {
         name: 'widget',
         options: {
@@ -330,7 +328,7 @@ export default {
   components: {
     Select2
   },
-  mounted: function() {
+  mounted() {
     this.initProvider();
 
     // Transfer selected DataSource id to the parent
@@ -338,12 +336,12 @@ export default {
       Fliplet.Widget.save({ id: this.selectedDataSource ? this.selectedDataSource.id : undefined });
     });
   },
-  updated: function() {
+  updated() {
     Fliplet.Widget.autosize();
   },
   watch: {
     showAll: {
-      handler: function(value) {
+      handler(value) {
         this.isLoading = true;
 
         if (value) {
