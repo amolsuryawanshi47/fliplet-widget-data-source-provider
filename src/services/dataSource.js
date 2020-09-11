@@ -11,7 +11,7 @@ export const getDataSource = (dataSourceId) => {
 export const createDataSource = (data) => {
   return Fliplet.Modal.prompt({
     title: 'Enter a name for the data source',
-    default: data.default.name || ''
+    value: data.default.name || ''
   })
     .then(dataSourceName => {
       if (dataSourceName === null) {
@@ -23,15 +23,21 @@ export const createDataSource = (data) => {
           message: 'Data source name can\'t be empty. Plaese enter data source name again.'
         })
           .then(() => {
-            return createDataSource();
+            return createDataSource(data);
           });
       }
 
       return Fliplet.DataSources.create({
         name: dataSourceName,
         appId: data.appId,
-        entries: data.defaults.entries,
-        columns: data.defaults.columns
+        entries: data.default.entries,
+        columns: data.default.columns
       });
     });
+};
+
+export const updateDataSourceSecurityRules = (dataSourceId, securityRules) => {
+  return Fliplet.DataSources.update(dataSourceId, {
+    accessRules: securityRules
+  });
 };

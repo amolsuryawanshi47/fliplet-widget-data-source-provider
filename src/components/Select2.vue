@@ -49,7 +49,8 @@ export default {
       default: null
     },
     selectedOption: {
-      type: Number
+      type: Object,
+      default: null
     },
     optionValueKey: {
       type: String,
@@ -72,63 +73,97 @@ export default {
     };
   },
   methods: {
-    toggleSelect: function(init) {
+    toggleSelect(init) {
       if (!init) {
         this.$refs.select.classList.toggle('active');
 
         Fliplet.Widget.autosize();
       }
     },
-    setOption: function(value, init) {
+    setOption(value, init) {
       this.setedOption = this.getSelectedOptionLabel(value);
-      this.$emit('onSelect', value);
+      this.$emit('update:selectedOption', value);
       this.toggleSelect(init);
     },
-    getSelectedOptionValue: function(value) {
+    getSelectedOptionValue(value) {
       if (!this.optionValueKey) {
         return value;
       }
 
       return value && value[this.optionValueKey];
     },
-    getSelectedOptionLabel: function(value) {
+    getSelectedOptionLabel(value) {
       if (!this.optionLabelKey) {
         return value;
       }
 
       return value && value[this.optionLabelKey];
     },
-    search: function() {
+    deepCopy(inObject) {
+      let outObject;
+      let value;
+      let key;
+
+      if (typeof inObject !== 'object' || inObject === null) {
+        return inObject; // Return the value if inObject is not an object
+      }
+
+      // Create an array or object to hold the values
+      outObject = Array.isArray(inObject) ? [] : {};
+
+      // eslint-disable-next-line guard-for-in
+      for (key in inObject) {
+        value = inObject[key];
+
+        // Recursively (deep) copy for nested objects, including arrays
+        outObject[key] = this.deepCopy(value);
+      }
+
+      return outObject;
+    },
+    search() {
+      // Using JSON.parse(JSON.stringify()) to make rip inner array bindings
+      const optionsCopy = this.deepCopy(this.options);
+
       if (this.customSearch) {
-        this.selectOptions = this.options.filter(option => {
-          return this.customSearch(this.searchValue, option);
-        });
+        if (this.selectWithGroups && this.selectOptions.length) {
+          this.selectOptions.forEach((group, index, originArray) => {
+            originArray[index].options = optionsCopy[index].options.filter(option => {
+              return this.customSearch(this.searchValue, option);
+            });
+          });
+        } else {
+          this.selectOptions = optionsCopy.filter(option => {
+            return this.customSearch(this.searchValue, option);
+          });
+        }
 
         return;
       }
 
       this.defaultSearch(this.searchValue);
     },
-    optionView: function(data) {
+    optionView(data) {
       if (this.customOptionView) {
         return this.customOptionView(data);
       }
 
       return data;
     },
-    defaultSearch: function(value) {
+    defaultSearch(value) {
+      const optionsCopy = this.deepCopy(this.options);
       this.selectOptions = [];
 
       if (!value) {
-        this.selectOptions = [...this.options];
+        this.selectOptions = [...optionsCopy];
         return;
       }
 
-      this.selectOptions = this.options.filter((option) => {
+      this.selectOptions = optionsCopy.filter((option) => {
         return option.indexOf(value) !== -1;
       });
     },
-    initSelect2: function() {
+    initSelect2() {
       this.search();
       this.setOption(this.selectedOption, true);
     }
