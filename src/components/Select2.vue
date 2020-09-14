@@ -5,7 +5,7 @@
     </div>
     <div class="options">
       <div class="search">
-        <input @input="search" type="text" v-model.trim="searchValue"/>
+        <input @input="() => { search() }" type="text" v-model.trim="searchValue"/>
       </div>
       <div v-if="!selectOptions.length && !searchValue" class="info">
         Loading...
@@ -99,33 +99,11 @@ export default {
 
       return value && value[this.optionLabelKey];
     },
-    deepCopy(inObject) {
-      let outObject;
-      let value;
-      let key;
-
-      if (typeof inObject !== 'object' || inObject === null) {
-        return inObject; // Return the value if inObject is not an object
-      }
-
-      // Create an array or object to hold the values
-      outObject = Array.isArray(inObject) ? [] : {};
-
-      // eslint-disable-next-line guard-for-in
-      for (key in inObject) {
-        value = inObject[key];
-
-        // Recursively (deep) copy for nested objects, including arrays
-        outObject[key] = this.deepCopy(value);
-      }
-
-      return outObject;
-    },
-    search() {
-      const optionsCopy = this.deepCopy(this.options);
+    search(init) {
+      const optionsCopy = _.cloneDeep(this.options);
 
       if (this.customSearch) {
-        if (this.selectWithGroups && this.selectOptions.length) {
+        if (this.selectWithGroups && !init) {
           this.selectOptions.forEach((group, index, originArray) => {
             originArray[index].options = optionsCopy[index].options.filter(option => {
               return this.customSearch(this.searchValue, option);
@@ -150,7 +128,7 @@ export default {
       return data;
     },
     defaultSearch(value) {
-      const optionsCopy = this.deepCopy(this.options);
+      const optionsCopy = _.cloneDeep(this.options);
       this.selectOptions = [];
 
       if (!value) {
@@ -163,7 +141,7 @@ export default {
       });
     },
     initSelect2() {
-      this.search();
+      this.search(true);
       this.setOption(this.selectedOption, true);
     }
   },

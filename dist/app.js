@@ -107,7 +107,7 @@ new Vue({
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _DataSourceProvider_vue_vue_type_template_id_4de52e2f___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
 /* harmony import */ var _DataSourceProvider_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4);
-/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(18);
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(17);
 
 
 
@@ -393,7 +393,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6);
 /* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _components_Select2_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(12);
-/* harmony import */ var _services_dataSource__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(19);
+/* harmony import */ var _services_dataSource__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(18);
 
 //
 //
@@ -580,11 +580,11 @@ __webpack_require__.r(__webpack_exports__);
 
       Object(_services_dataSource__WEBPACK_IMPORTED_MODULE_2__["getDataSources"])(appId).then(function (dataSources) {
         if (_this4.widgetData.dataSourceId) {
-          var selectedDataSourceInDataSources = dataSources.some(function (dataSource) {
+          var selectedDataSourceFound = dataSources.some(function (dataSource) {
             return dataSource.id === _this4.selectedDataSource.id;
           });
 
-          if (!selectedDataSourceInDataSources) {
+          if (!selectedDataSourceFound) {
             dataSources.push(_this4.selectedDataSource);
           }
         }
@@ -859,7 +859,7 @@ module.exports = _nonIterableSpread;
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Select2_vue_vue_type_template_id_bfa75c94___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(13);
 /* harmony import */ var _Select2_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(15);
-/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(18);
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(17);
 
 
 
@@ -949,7 +949,9 @@ var render = function() {
                 }
                 _vm.searchValue = $event.target.value.trim()
               },
-              _vm.search
+              function() {
+                _vm.search()
+              }
             ],
             blur: function($event) {
               return _vm.$forceUpdate()
@@ -1059,9 +1061,6 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6);
 /* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(17);
-/* harmony import */ var _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_1__);
-
 
 //
 //
@@ -1162,33 +1161,13 @@ __webpack_require__.r(__webpack_exports__);
 
       return value && value[this.optionLabelKey];
     },
-    deepCopy: function deepCopy(inObject) {
-      var outObject;
-      var value;
-      var key;
-
-      if (_babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_1___default()(inObject) !== 'object' || inObject === null) {
-        return inObject; // Return the value if inObject is not an object
-      } // Create an array or object to hold the values
-
-
-      outObject = Array.isArray(inObject) ? [] : {}; // eslint-disable-next-line guard-for-in
-
-      for (key in inObject) {
-        value = inObject[key]; // Recursively (deep) copy for nested objects, including arrays
-
-        outObject[key] = this.deepCopy(value);
-      }
-
-      return outObject;
-    },
-    search: function search() {
+    search: function search(init) {
       var _this = this;
 
-      var optionsCopy = this.deepCopy(this.options);
+      var optionsCopy = _.cloneDeep(this.options);
 
       if (this.customSearch) {
-        if (this.selectWithGroups && this.selectOptions.length) {
+        if (this.selectWithGroups && !init) {
           this.selectOptions.forEach(function (group, index, originArray) {
             originArray[index].options = optionsCopy[index].options.filter(function (option) {
               return _this.customSearch(_this.searchValue, option);
@@ -1213,7 +1192,8 @@ __webpack_require__.r(__webpack_exports__);
       return data;
     },
     defaultSearch: function defaultSearch(value) {
-      var optionsCopy = this.deepCopy(this.options);
+      var optionsCopy = _.cloneDeep(this.options);
+
       this.selectOptions = [];
 
       if (!value) {
@@ -1226,7 +1206,7 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     initSelect2: function initSelect2() {
-      this.search();
+      this.search(true);
       this.setOption(this.selectedOption, true);
     }
   },
@@ -1237,28 +1217,6 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 /* 17 */
-/***/ (function(module, exports) {
-
-function _typeof(obj) {
-  "@babel/helpers - typeof";
-
-  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
-    module.exports = _typeof = function _typeof(obj) {
-      return typeof obj;
-    };
-  } else {
-    module.exports = _typeof = function _typeof(obj) {
-      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-    };
-  }
-
-  return _typeof(obj);
-}
-
-module.exports = _typeof;
-
-/***/ }),
-/* 18 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1365,7 +1323,7 @@ function normalizeComponent (
 
 
 /***/ }),
-/* 19 */
+/* 18 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

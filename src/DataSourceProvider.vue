@@ -191,11 +191,11 @@ export default {
       getDataSources(appId)
         .then(dataSources => {
           if (this.widgetData.dataSourceId) {
-            const selectedDataSourceInDataSources = dataSources.some(dataSource => {
+            const selectedDataSourceFound = dataSources.some(dataSource => {
               return dataSource.id === this.selectedDataSource.id;
             });
 
-            if (!selectedDataSourceInDataSources) {
+            if (!selectedDataSourceFound) {
               dataSources.push(this.selectedDataSource);
             }
           }
