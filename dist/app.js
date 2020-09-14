@@ -335,7 +335,7 @@ var render = function() {
                         [_vm._v("Configure security rules")]
                       )
                     ])
-                  : _vm.securityEnabled
+                  : _vm.securityAdded
                   ? _c("div", { staticClass: "alert alert-success" }, [
                       _vm._v(
                         "\n          Security rules added. To manage security rules click "
@@ -477,7 +477,8 @@ __webpack_require__.r(__webpack_exports__);
       dataSources: [],
       changeDataSource: false,
       securityEnabled: false,
-      showAll: false
+      showAll: false,
+      securityAdded: false
     };
   },
   methods: {
@@ -500,6 +501,8 @@ __webpack_require__.r(__webpack_exports__);
           message: 'Your changes have been applied to all affected apps.'
         }).then(function () {
           _this.hasAccessRules();
+
+          _this.securityAdded = true;
         });
       })["catch"](function (err) {
         _this.hasError = true;
@@ -569,6 +572,7 @@ __webpack_require__.r(__webpack_exports__);
         _this3.hasError = true;
       })["finally"](function () {
         _this3.isLoading = false;
+        Fliplet.Widget.autosize();
       });
     },
     loadDataSources: function loadDataSources(appId) {
@@ -1181,7 +1185,6 @@ __webpack_require__.r(__webpack_exports__);
     search: function search() {
       var _this = this;
 
-      // Using JSON.parse(JSON.stringify()) to make rip inner array bindings
       var optionsCopy = this.deepCopy(this.options);
 
       if (this.customSearch) {

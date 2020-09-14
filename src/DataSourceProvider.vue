@@ -54,7 +54,7 @@
             <p>Configure security rules so the app can access the data</p>
             <div @click="onAddDefaultSecurity" class="btn btn-primary btn-security">Configure security rules</div>
           </div>
-          <div v-else-if="securityEnabled" class="alert alert-success">
+          <div v-else-if="securityAdded" class="alert alert-success">
             Security rules added. To manage security rules click <b>View data source</b> above.
           </div>
         </section>
@@ -82,7 +82,8 @@ export default {
       dataSources: [],
       changeDataSource: false,
       securityEnabled: false,
-      showAll: false
+      showAll: false,
+      securityAdded: false
     };
   },
   methods: {
@@ -106,6 +107,7 @@ export default {
           })
             .then(() => {
               this.hasAccessRules();
+              this.securityAdded = true;
             });
         })
         .catch(err => {
@@ -182,6 +184,7 @@ export default {
         })
         .finally(() => {
           this.isLoading = false;
+          Fliplet.Widget.autosize();
         });
     },
     loadDataSources(appId) {

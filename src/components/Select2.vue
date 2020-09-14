@@ -122,7 +122,6 @@ export default {
       return outObject;
     },
     search() {
-      // Using JSON.parse(JSON.stringify()) to make rip inner array bindings
       const optionsCopy = this.deepCopy(this.options);
 
       if (this.customSearch) {
