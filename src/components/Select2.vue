@@ -100,9 +100,9 @@ export default {
       return value && value[this.optionLabelKey];
     },
     search(init) {
-      const optionsCopy = _.cloneDeep(this.options);
-
       if (this.customSearch) {
+        const optionsCopy = _.cloneDeep(this.options);
+
         if (this.selectWithGroups && !init) {
           this.selectOptions.forEach((group, index, originArray) => {
             originArray[index].options = optionsCopy[index].options.filter(option => {
@@ -128,15 +128,14 @@ export default {
       return data;
     },
     defaultSearch(value) {
-      const optionsCopy = _.cloneDeep(this.options);
       this.selectOptions = [];
 
       if (!value) {
-        this.selectOptions = [...optionsCopy];
+        this.selectOptions = _.cloneDeep(this.options);
         return;
       }
 
-      this.selectOptions = optionsCopy.filter((option) => {
+      this.selectOptions = this.options.filter((option) => {
         return option.indexOf(value) !== -1;
       });
     },
