@@ -1189,8 +1189,6 @@ __webpack_require__.r(__webpack_exports__);
       return data;
     },
     defaultSearch: function defaultSearch(value) {
-      this.selectOptions = [];
-
       if (!value) {
         this.selectOptions = _.cloneDeep(this.options);
         return;

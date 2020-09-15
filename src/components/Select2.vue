@@ -128,8 +128,6 @@ export default {
       return data;
     },
     defaultSearch(value) {
-      this.selectOptions = [];
-
       if (!value) {
         this.selectOptions = _.cloneDeep(this.options);
         return;
