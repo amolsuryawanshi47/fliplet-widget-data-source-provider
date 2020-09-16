@@ -5,7 +5,7 @@
     </div>
     <div class="options">
       <div class="search">
-        <input @input="search" type="text" v-model.trim="searchValue"/>
+        <input @input="() => { search() }" type="text" v-model.trim="searchValue"/>
       </div>
       <div v-if="!selectOptions.length && !searchValue" class="info">
         Loading...
@@ -49,7 +49,8 @@ export default {
       default: null
     },
     selectedOption: {
-      type: Number
+      type: Object,
+      default: null
     },
     optionValueKey: {
       type: String,
@@ -72,55 +73,63 @@ export default {
     };
   },
   methods: {
-    toggleSelect: function(init) {
+    toggleSelect(init) {
       if (!init) {
         this.$refs.select.classList.toggle('active');
 
         Fliplet.Widget.autosize();
       }
     },
-    setOption: function(value, init) {
+    setOption(value, init) {
       this.setedOption = this.getSelectedOptionLabel(value);
-      this.$emit('onSelect', value);
+      this.$emit('update:selectedOption', value);
       this.toggleSelect(init);
     },
-    getSelectedOptionValue: function(value) {
+    getSelectedOptionValue(value) {
       if (!this.optionValueKey) {
         return value;
       }
 
       return value && value[this.optionValueKey];
     },
-    getSelectedOptionLabel: function(value) {
+    getSelectedOptionLabel(value) {
       if (!this.optionLabelKey) {
         return value;
       }
 
       return value && value[this.optionLabelKey];
     },
-    search: function() {
+    search(init) {
       if (this.customSearch) {
-        this.selectOptions = this.options.filter(option => {
-          return this.customSearch(this.searchValue, option);
-        });
+        const optionsCopy = _.cloneDeep(this.options);
+
+        if (this.selectWithGroups && !init) {
+          this.selectOptions.forEach((group, index, originArray) => {
+            originArray[index].options = optionsCopy[index].options.filter(option => {
+              return this.customSearch(this.searchValue, option);
+            });
+          });
+        } else {
+          this.selectOptions = optionsCopy.filter(option => {
+            return this.customSearch(this.searchValue, option);
+          });
+        }
 
         return;
       }
 
       this.defaultSearch(this.searchValue);
     },
-    optionView: function(data) {
+    optionView(data) {
       if (this.customOptionView) {
         return this.customOptionView(data);
       }
 
       return data;
     },
-    defaultSearch: function(value) {
-      this.selectOptions = [];
-
+    defaultSearch(value) {
       if (!value) {
-        this.selectOptions = [...this.options];
+        this.selectOptions = _.cloneDeep(this.options);
         return;
       }
 
@@ -128,8 +137,8 @@ export default {
         return option.indexOf(value) !== -1;
       });
     },
-    initSelect2: function() {
-      this.search();
+    initSelect2() {
+      this.search(true);
       this.setOption(this.selectedOption, true);
     }
   },

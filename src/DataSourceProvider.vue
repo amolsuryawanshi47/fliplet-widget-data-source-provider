@@ -15,11 +15,11 @@
     <div v-else class="main-data-source-provider">
       <section class="data-source-selector">
 
-        <div v-if="dataSources.length && changeDataSource">
+        <div v-if="dataSources.length">
 
           <Select2
-            :dataSources="dataSources"
-            :selectedDataSource.sync="selectedDataSource"
+            :options="dataSources"
+            :selectedOption.sync="selectedDataSource"
             :customOptionView="formatDataSourceOption"
             :customSearch="customDataSourceSearch"
             :optionLabelKey="'name'"
@@ -31,7 +31,7 @@
           <a @click.prevent="onDataSourceCreate" class="create-data-source" href="#">Create new data source</a>
 
           <div class="checkbox checkbox-icon">
-            <input :checked="showAll" type="checkbox" name="showAll" id="showAll" />
+            <input :checked="showAll" v-model="showAll" type="checkbox" name="showAll" id="showAll" />
             <label for="showAll">
               <span class="check">
                 <i class="fa fa-check"></i>
@@ -54,7 +54,7 @@
             <p>Configure security rules so the app can access the data</p>
             <div @click="onAddDefaultSecurity" class="btn btn-primary btn-security">Configure security rules</div>
           </div>
-          <div v-else-if="securityEnabled" class="alert alert-success">
+          <div v-else-if="securityAdded" class="alert alert-success">
             Security rules added. To manage security rules click <b>View data source</b> above.
           </div>
         </section>
@@ -82,13 +82,11 @@ export default {
       dataSources: [],
       changeDataSource: false,
       securityEnabled: false,
-      showAll: false
+      showAll: false,
+      securityAdded: false
     };
   },
   methods: {
-    onDataSourceSelect(dataSource) {
-      this.selectedDataSource = dataSource;
-    },
     initProvider() {
       this.widgetData = Fliplet.Widget.getData();
 
@@ -106,7 +104,11 @@ export default {
         .then(() => {
           Fliplet.Modal.alert({
             message: 'Your changes have been applied to all affected apps.'
-          });
+          })
+            .then(() => {
+              this.hasAccessRules();
+              this.securityAdded = true;
+            });
         })
         .catch(err => {
           this.hasError = true;
@@ -152,6 +154,7 @@ export default {
           }
 
           this.appDataSources.push(dataSource);
+          this.hasAccessRules();
         })
         .catch(err => {
           this.hasError = true;
@@ -172,6 +175,8 @@ export default {
               id: this.selectedDataSource.id
             }
           );
+
+          this.hasAccessRules();
         })
         .catch(err => {
           this.errorMessage = Fliplet.parseError(err);
@@ -179,24 +184,30 @@ export default {
         })
         .finally(() => {
           this.isLoading = false;
+          Fliplet.Widget.autosize();
         });
     },
     loadDataSources(appId) {
       getDataSources(appId)
         .then(dataSources => {
-          const selectedDataSourceInDataSources = dataSources.some(dataSource => {
-            return dataSource.id === this.selectedDataSource.id;
-          });
+          if (this.widgetData.dataSourceId) {
+            const selectedDataSourceFound = dataSources.some(dataSource => {
+              return dataSource.id === this.selectedDataSource.id;
+            });
 
-          if (!selectedDataSourceInDataSources) {
-            dataSources.push(this.selectedDataSource);
+            if (!selectedDataSourceFound) {
+              dataSources.push(this.selectedDataSource);
+            }
           }
 
           if (appId) {
-            this.appDataSources = this.formatDataSources(dataSources);
+            this.appDataSources = dataSources;
           } else {
-            this.allDataSources = this.formatDataSources(dataSources);
+            this.allDataSources = dataSources;
           }
+
+          this.dataSources = this.formatDataSources();
+          this.hasAccessRules();
         })
         .catch(err => {
           this.hasError = true;
@@ -208,13 +219,8 @@ export default {
         });
     },
     formatDataSources() {
-      // If we have selected data source before
-      if (!this.appDataSources.length) {
-        return [];
-      }
-
       // If the otherDataSources array is empty it means that we show the user only data sources for the current app
-      if (!this.otherDataSources.length) {
+      if (!this.allDataSources.length) {
         return this.sortDataSourceEntries(this.appDataSources);
       }
 
@@ -236,7 +242,7 @@ export default {
     },
     getOtherAppsDataSources(dataSources) {
       return dataSources.filter(dataSource => {
-        return this.currentAppDataSources.findIndex(currDS => currDS.id === dataSource.id) === -1;
+        return this.appDataSources.findIndex(currDS => currDS.id === dataSource.id) === -1;
       });
     },
     formatDataSourceOption(data) {
@@ -262,16 +268,6 @@ export default {
 
       // Return `false` if the term should not be displayed
       return false;
-    },
-    setDataSource(dataSource) {
-      if (dataSource) {
-        this.selectedDataSource = dataSource;
-
-        Fliplet.Widget.emit('dataSourceSelect', {
-          columns: dataSource.columns,
-          id: dataSource.id
-        });
-      }
     },
     sortDataSourceEntries(dataSources) {
       const copyDataSources = [...dataSources];
@@ -343,6 +339,7 @@ export default {
     showAll: {
       handler(value) {
         this.isLoading = true;
+        this.dataSources = [];
 
         if (value) {
           if (!this.copyOfAllDataSources.length) {
@@ -356,10 +353,25 @@ export default {
           this.allDataSources = [];
         }
 
+        this.dataSources = this.formatDataSources();
+
         // Give VUE time to reset templates
         this.$nextTick(() => {
           this.isLoading = false;
         });
+      }
+    },
+    selectedDataSource: {
+      handler(dataSource) {
+        if (dataSource) {
+          this.selectedDataSource = dataSource;
+          this.hasAccessRules();
+
+          Fliplet.Widget.emit('dataSourceSelect', {
+            columns: dataSource.columns,
+            id: dataSource.id
+          });
+        }
       }
     }
   }

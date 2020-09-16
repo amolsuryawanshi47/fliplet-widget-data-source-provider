@@ -175,14 +175,14 @@ var render = function() {
         )
       : _c("div", { staticClass: "main-data-source-provider" }, [
           _c("section", { staticClass: "data-source-selector" }, [
-            _vm.dataSources.length && _vm.changeDataSource
+            _vm.dataSources.length
               ? _c(
                   "div",
                   [
                     _c("Select2", {
                       attrs: {
-                        dataSources: _vm.dataSources,
-                        selectedDataSource: _vm.selectedDataSource,
+                        options: _vm.dataSources,
+                        selectedOption: _vm.selectedDataSource,
                         customOptionView: _vm.formatDataSourceOption,
                         customSearch: _vm.customDataSourceSearch,
                         optionLabelKey: "name",
@@ -190,10 +190,10 @@ var render = function() {
                         selectWithGroups: !!_vm.allDataSources.length
                       },
                       on: {
-                        "update:selectedDataSource": function($event) {
+                        "update:selectedOption": function($event) {
                           _vm.selectedDataSource = $event
                         },
-                        "update:selected-data-source": function($event) {
+                        "update:selected-option": function($event) {
                           _vm.selectedDataSource = $event
                         }
                       }
@@ -216,12 +216,46 @@ var render = function() {
                     _vm._v(" "),
                     _c("div", { staticClass: "checkbox checkbox-icon" }, [
                       _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.showAll,
+                            expression: "showAll"
+                          }
+                        ],
                         attrs: {
                           type: "checkbox",
                           name: "showAll",
                           id: "showAll"
                         },
-                        domProps: { checked: _vm.showAll }
+                        domProps: {
+                          checked: _vm.showAll,
+                          checked: Array.isArray(_vm.showAll)
+                            ? _vm._i(_vm.showAll, null) > -1
+                            : _vm.showAll
+                        },
+                        on: {
+                          change: function($event) {
+                            var $$a = _vm.showAll,
+                              $$el = $event.target,
+                              $$c = $$el.checked ? true : false
+                            if (Array.isArray($$a)) {
+                              var $$v = null,
+                                $$i = _vm._i($$a, $$v)
+                              if ($$el.checked) {
+                                $$i < 0 && (_vm.showAll = $$a.concat([$$v]))
+                              } else {
+                                $$i > -1 &&
+                                  (_vm.showAll = $$a
+                                    .slice(0, $$i)
+                                    .concat($$a.slice($$i + 1)))
+                              }
+                            } else {
+                              _vm.showAll = $$c
+                            }
+                          }
+                        }
                       }),
                       _vm._v(" "),
                       _vm._m(0)
@@ -301,7 +335,7 @@ var render = function() {
                         [_vm._v("Configure security rules")]
                       )
                     ])
-                  : _vm.securityEnabled
+                  : _vm.securityAdded
                   ? _c("div", { staticClass: "alert alert-success" }, [
                       _vm._v(
                         "\n          Security rules added. To manage security rules click "
@@ -443,13 +477,11 @@ __webpack_require__.r(__webpack_exports__);
       dataSources: [],
       changeDataSource: false,
       securityEnabled: false,
-      showAll: false
+      showAll: false,
+      securityAdded: false
     };
   },
   methods: {
-    onDataSourceSelect: function onDataSourceSelect(dataSource) {
-      this.selectedDataSource = dataSource;
-    },
     initProvider: function initProvider() {
       this.widgetData = Fliplet.Widget.getData();
 
@@ -467,6 +499,10 @@ __webpack_require__.r(__webpack_exports__);
       Object(_services_dataSource__WEBPACK_IMPORTED_MODULE_2__["updateDataSourceSecurityRules"])(this.selectedDataSource.id, this.selectedDataSource.accessRules).then(function () {
         Fliplet.Modal.alert({
           message: 'Your changes have been applied to all affected apps.'
+        }).then(function () {
+          _this.hasAccessRules();
+
+          _this.securityAdded = true;
         });
       })["catch"](function (err) {
         _this.hasError = true;
@@ -511,6 +547,8 @@ __webpack_require__.r(__webpack_exports__);
         }
 
         _this2.appDataSources.push(dataSource);
+
+        _this2.hasAccessRules();
       })["catch"](function (err) {
         _this2.hasError = true;
         _this2.errorMessage = Fliplet.parseError(err);
@@ -527,30 +565,39 @@ __webpack_require__.r(__webpack_exports__);
           columns: _this3.selectedDataSource.columns,
           id: _this3.selectedDataSource.id
         });
+
+        _this3.hasAccessRules();
       })["catch"](function (err) {
         _this3.errorMessage = Fliplet.parseError(err);
         _this3.hasError = true;
       })["finally"](function () {
         _this3.isLoading = false;
+        Fliplet.Widget.autosize();
       });
     },
     loadDataSources: function loadDataSources(appId) {
       var _this4 = this;
 
       Object(_services_dataSource__WEBPACK_IMPORTED_MODULE_2__["getDataSources"])(appId).then(function (dataSources) {
-        var selectedDataSourceInDataSources = dataSources.some(function (dataSource) {
-          return dataSource.id === _this4.selectedDataSource.id;
-        });
+        if (_this4.widgetData.dataSourceId) {
+          var selectedDataSourceFound = dataSources.some(function (dataSource) {
+            return dataSource.id === _this4.selectedDataSource.id;
+          });
 
-        if (!selectedDataSourceInDataSources) {
-          dataSources.push(_this4.selectedDataSource);
+          if (!selectedDataSourceFound) {
+            dataSources.push(_this4.selectedDataSource);
+          }
         }
 
         if (appId) {
-          _this4.appDataSources = _this4.formatDataSources(dataSources);
+          _this4.appDataSources = dataSources;
         } else {
-          _this4.allDataSources = _this4.formatDataSources(dataSources);
+          _this4.allDataSources = dataSources;
         }
+
+        _this4.dataSources = _this4.formatDataSources();
+
+        _this4.hasAccessRules();
       })["catch"](function (err) {
         _this4.hasError = true;
         _this4.errorMessage = Fliplet.parseError(err);
@@ -560,13 +607,8 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     formatDataSources: function formatDataSources() {
-      // If we have selected data source before
-      if (!this.appDataSources.length) {
-        return [];
-      } // If the otherDataSources array is empty it means that we show the user only data sources for the current app
-
-
-      if (!this.otherDataSources.length) {
+      // If the otherDataSources array is empty it means that we show the user only data sources for the current app
+      if (!this.allDataSources.length) {
         return this.sortDataSourceEntries(this.appDataSources);
       }
 
@@ -585,7 +627,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this5 = this;
 
       return dataSources.filter(function (dataSource) {
-        return _this5.currentAppDataSources.findIndex(function (currDS) {
+        return _this5.appDataSources.findIndex(function (currDS) {
           return currDS.id === dataSource.id;
         }) === -1;
       });
@@ -613,15 +655,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
       return false;
-    },
-    setDataSource: function setDataSource(dataSource) {
-      if (dataSource) {
-        this.selectedDataSource = dataSource;
-        Fliplet.Widget.emit('dataSourceSelect', {
-          columns: dataSource.columns,
-          id: dataSource.id
-        });
-      }
     },
     sortDataSourceEntries: function sortDataSourceEntries(dataSources) {
       var copyDataSources = _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default()(dataSources);
@@ -699,6 +732,7 @@ __webpack_require__.r(__webpack_exports__);
         var _this7 = this;
 
         this.isLoading = true;
+        this.dataSources = [];
 
         if (value) {
           if (!this.copyOfAllDataSources.length) {
@@ -710,12 +744,25 @@ __webpack_require__.r(__webpack_exports__);
         } else {
           this.copyOfAllDataSources = _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default()(this.allDataSources);
           this.allDataSources = [];
-        } // Give VUE time to reset templates
+        }
 
+        this.dataSources = this.formatDataSources(); // Give VUE time to reset templates
 
         this.$nextTick(function () {
           _this7.isLoading = false;
         });
+      }
+    },
+    selectedDataSource: {
+      handler: function handler(dataSource) {
+        if (dataSource) {
+          this.selectedDataSource = dataSource;
+          this.hasAccessRules();
+          Fliplet.Widget.emit('dataSourceSelect', {
+            columns: dataSource.columns,
+            id: dataSource.id
+          });
+        }
       }
     }
   }
@@ -902,7 +949,9 @@ var render = function() {
                 }
                 _vm.searchValue = $event.target.value.trim()
               },
-              _vm.search
+              function() {
+                _vm.search()
+              }
             ],
             blur: function($event) {
               return _vm.$forceUpdate()
@@ -1010,9 +1059,6 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6);
-/* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0__);
-
 //
 //
 //
@@ -1063,7 +1109,8 @@ __webpack_require__.r(__webpack_exports__);
       "default": null
     },
     selectedOption: {
-      type: Number
+      type: Object,
+      "default": null
     },
     optionValueKey: {
       type: String,
@@ -1094,7 +1141,7 @@ __webpack_require__.r(__webpack_exports__);
     },
     setOption: function setOption(value, init) {
       this.setedOption = this.getSelectedOptionLabel(value);
-      this.$emit('onSelect', value);
+      this.$emit('update:selectedOption', value);
       this.toggleSelect(init);
     },
     getSelectedOptionValue: function getSelectedOptionValue(value) {
@@ -1111,13 +1158,24 @@ __webpack_require__.r(__webpack_exports__);
 
       return value && value[this.optionLabelKey];
     },
-    search: function search() {
+    search: function search(init) {
       var _this = this;
 
       if (this.customSearch) {
-        this.selectOptions = this.options.filter(function (option) {
-          return _this.customSearch(_this.searchValue, option);
-        });
+        var optionsCopy = _.cloneDeep(this.options);
+
+        if (this.selectWithGroups && !init) {
+          this.selectOptions.forEach(function (group, index, originArray) {
+            originArray[index].options = optionsCopy[index].options.filter(function (option) {
+              return _this.customSearch(_this.searchValue, option);
+            });
+          });
+        } else {
+          this.selectOptions = optionsCopy.filter(function (option) {
+            return _this.customSearch(_this.searchValue, option);
+          });
+        }
+
         return;
       }
 
@@ -1131,10 +1189,8 @@ __webpack_require__.r(__webpack_exports__);
       return data;
     },
     defaultSearch: function defaultSearch(value) {
-      this.selectOptions = [];
-
       if (!value) {
-        this.selectOptions = _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default()(this.options);
+        this.selectOptions = _.cloneDeep(this.options);
         return;
       }
 
@@ -1143,7 +1199,7 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     initSelect2: function initSelect2() {
-      this.search();
+      this.search(true);
       this.setOption(this.selectedOption, true);
     }
   },
@@ -1268,6 +1324,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getDataSources", function() { return getDataSources; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getDataSource", function() { return getDataSource; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createDataSource", function() { return createDataSource; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "updateDataSourceSecurityRules", function() { return updateDataSourceSecurityRules; });
 var getDataSources = function getDataSources(appId) {
   var getOptions = appId ? {
     appId: appId
@@ -1280,7 +1337,7 @@ var getDataSource = function getDataSource(dataSourceId) {
 var createDataSource = function createDataSource(data) {
   return Fliplet.Modal.prompt({
     title: 'Enter a name for the data source',
-    "default": data["default"].name || ''
+    value: data["default"].name || ''
   }).then(function (dataSourceName) {
     if (dataSourceName === null) {
       return;
@@ -1290,16 +1347,21 @@ var createDataSource = function createDataSource(data) {
       return Fliplet.Modal.alert({
         message: 'Data source name can\'t be empty. Plaese enter data source name again.'
       }).then(function () {
-        return createDataSource();
+        return createDataSource(data);
       });
     }
 
     return Fliplet.DataSources.create({
       name: dataSourceName,
       appId: data.appId,
-      entries: data.defaults.entries,
-      columns: data.defaults.columns
+      entries: data["default"].entries,
+      columns: data["default"].columns
     });
+  });
+};
+var updateDataSourceSecurityRules = function updateDataSourceSecurityRules(dataSourceId, securityRules) {
+  return Fliplet.DataSources.update(dataSourceId, {
+    accessRules: securityRules
   });
 };
 
