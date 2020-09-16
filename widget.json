@@ -1,18 +1,17 @@
 {
-  "name": "fliplet-widget-data-source-provider",
-  "package": "fliplet-widget-data-source-provider",
+  "name": "Data source provider",
+  "package": "com.fliplet.data-source-provider",
   "version": "1.0.0",
-  "description": "",
   "icon": "img/icon.png",
-  "tags": ["type:component", "category:general"],
-  "provider_only": false,
-  "references": [],
-  "html_tag": "div",
+  "tags": [],
+  "provider_only": true,
   "interface": {
     "dependencies": [
       "vue.js",
       "fliplet-core",
-      "fliplet-studio-ui"
+      "fliplet-datasources",
+      "fliplet-studio-ui",
+      "lodash"
     ],
     "assets": [
       "dist/css/index.css",
