@@ -265,13 +265,18 @@ var render = function() {
                 )
               : _vm.selectedDataSource && !_vm.changeDataSource
               ? _c("div", [
-                  _c("p", [
-                    _c("code", [_vm._v(_vm._s(_vm.selectedDataSource.id))]),
-                    _vm._v(" " + _vm._s(_vm.selectedDataSource.name) + " "),
+                  _c("div", { staticClass: "selected-data-source" }, [
+                    _c("div", { staticClass: "selected-data-source info" }, [
+                      _c("code", [_vm._v(_vm._s(_vm.selectedDataSource.id))]),
+                      _vm._v(" "),
+                      _c("span", [_vm._v(_vm._s(_vm.selectedDataSource.name))])
+                    ]),
+                    _vm._v(" "),
                     _c(
                       "a",
                       {
-                        staticClass: "change-data-source",
+                        staticClass:
+                          "change-data-source selected-data-source action",
                         on: {
                           click: function($event) {
                             $event.preventDefault()
@@ -395,6 +400,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_Select2_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(12);
 /* harmony import */ var _services_dataSource__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(18);
 
+//
+//
+//
+//
+//
 //
 //
 //
@@ -921,7 +931,7 @@ var render = function() {
         }
       },
       [
-        _c("span", { staticClass: "select-holder" }, [
+        _c("div", { staticClass: "select-holder" }, [
           _vm._v(_vm._s(_vm.setedOption || "-- Select an option"))
         ])
       ]

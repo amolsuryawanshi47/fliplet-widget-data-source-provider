@@ -28,3 +28,29 @@
 .change-data-source {
   cursor: pointer;
 }
+
+.selected-data-source {
+  display: flex;
+  width: 100%;
+
+  .info {
+    display: flex;
+    width: 80%;
+
+    code {
+      width: 20%;
+    }
+
+    span {
+      display: inline-block;
+      width: 90%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  .action {
+    display: flex;
+    width: 20%;
+  }
+}
