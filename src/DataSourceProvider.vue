@@ -179,6 +179,14 @@ export default {
           this.hasAccessRules();
         })
         .catch(err => {
+          if (err.status === 404) {
+            this.selectedDataSource = null;
+            this.widgetData.dataSourceId = null;
+            this.loadDataSources(this.widgetData.appId);
+
+            return;
+          }
+
           this.errorMessage = Fliplet.parseError(err);
           this.hasError = true;
         })
