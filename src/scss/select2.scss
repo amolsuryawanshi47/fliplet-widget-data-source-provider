@@ -1,4 +1,10 @@
 .select {
+  .select-holder {
+    width: 90%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
   & + .options {
     display: none;
   }

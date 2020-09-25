@@ -43,7 +43,12 @@
         </div>
 
         <div v-else-if="selectedDataSource && !changeDataSource">
-          <p><code>{{ selectedDataSource.id }}</code> {{ selectedDataSource.name }} <a @click.prevent="onDataSourceChange" class="change-data-source">Change</a></p>
+          <div class="selected-data-source">
+            <div class="selected-data-source info">
+              <code>{{ selectedDataSource.id }}</code> <span>{{ selectedDataSource.name }}</span>
+            </div>
+            <a @click.prevent="onDataSourceChange" class="change-data-source selected-data-source action">Change</a>
+          </div>
         </div>
 
         <div v-show="selectedDataSource" @click="viewDataSource" class="btn btn-default btn-view-data-source">View data source</div>

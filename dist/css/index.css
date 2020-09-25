@@ -22,6 +22,23 @@
 .change-data-source {
   cursor: pointer; }
 
+.selected-data-source {
+  display: flex;
+  width: 100%; }
+  .selected-data-source .info {
+    display: flex;
+    width: 80%; }
+    .selected-data-source .info code {
+      width: 20%; }
+    .selected-data-source .info span {
+      display: inline-block;
+      width: 90%;
+      overflow: hidden;
+      text-overflow: ellipsis; }
+  .selected-data-source .action {
+    display: flex;
+    width: 20%; }
+
 .select {
   display: flex;
   position: relative;
@@ -33,6 +50,10 @@
   border-radius: 8px;
   background-color: transparent;
   cursor: pointer; }
+  .select .select-holder {
+    width: 90%;
+    overflow: hidden;
+    text-overflow: ellipsis; }
   .select + .options {
     display: none; }
   .select.active + .options {

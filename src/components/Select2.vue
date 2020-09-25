@@ -1,7 +1,7 @@
 <template>
   <section>
     <div ref="select" class="select" @click="() => { toggleSelect() }">
-      <span class="select-holder">{{ setedOption || '-- Select an option' }}</span>
+      <div class="select-holder">{{ setedOption || '-- Select an option' }}</div>
     </div>
     <div class="options">
       <div class="search">
