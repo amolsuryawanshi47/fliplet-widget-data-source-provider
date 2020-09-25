@@ -609,9 +609,9 @@ __webpack_require__.r(__webpack_exports__);
         }
 
         if (appId) {
-          _this4.appDataSources = dataSources;
+          _this4.appDataSources = dataSources.filter(_this4.filterNotUsersDataSources);
         } else {
-          _this4.allDataSources = dataSources;
+          _this4.allDataSources = dataSources.filter(_this4.filterNotUsersDataSources);
         }
 
         _this4.dataSources = _this4.formatDataSources();
@@ -624,6 +624,9 @@ __webpack_require__.r(__webpack_exports__);
         _this4.isLoading = false;
         Fliplet.Widget.autosize();
       });
+    },
+    filterNotUsersDataSources: function filterNotUsersDataSources(dataSource) {
+      return !dataSource.type;
     },
     formatDataSources: function formatDataSources() {
       // If the otherDataSources array is empty it means that we show the user only data sources for the current app
