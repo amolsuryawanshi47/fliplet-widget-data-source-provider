@@ -543,7 +543,7 @@ __webpack_require__.r(__webpack_exports__);
         _this2.selectedDataSource = dataSource;
 
         if (_this2.allDataSources.length) {
-          _this2.allDataSources[0].options.push(dataSource);
+          _this2.allDataSources.push(dataSource);
         }
 
         _this2.appDataSources.push(dataSource);
