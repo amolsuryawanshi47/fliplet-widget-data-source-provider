@@ -568,6 +568,15 @@ __webpack_require__.r(__webpack_exports__);
 
         _this3.hasAccessRules();
       })["catch"](function (err) {
+        if (err.status === 404) {
+          _this3.selectedDataSource = null;
+          _this3.widgetData.dataSourceId = null;
+
+          _this3.loadDataSources(_this3.widgetData.appId);
+
+          return;
+        }
+
         _this3.errorMessage = Fliplet.parseError(err);
         _this3.hasError = true;
       })["finally"](function () {
