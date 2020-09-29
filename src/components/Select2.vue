@@ -7,7 +7,10 @@
       <div class="search">
         <input @input="() => { search() }" type="text" v-model.trim="searchValue"/>
       </div>
-      <div v-if="!selectOptions.length && !searchValue" class="info">
+      <div v-if="!options.length" class="info">
+        No data.
+      </div>
+      <div v-else-if="!selectOptions.length && !searchValue" class="info">
         Loading...
       </div>
       <div v-else-if="!selectOptions.length && searchValue" class="info">

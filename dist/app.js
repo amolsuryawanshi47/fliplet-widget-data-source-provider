@@ -175,7 +175,8 @@ var render = function() {
         )
       : _c("div", { staticClass: "main-data-source-provider" }, [
           _c("section", { staticClass: "data-source-selector" }, [
-            _vm.dataSources.length
+            _vm.dataSources.length ||
+            (!_vm.dataSources.length && !_vm.selectedDataSource)
               ? _c(
                   "div",
                   [
@@ -681,7 +682,7 @@ __webpack_require__.r(__webpack_exports__);
     sortDataSourceEntries: function sortDataSourceEntries(dataSources) {
       var copyDataSources = _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default()(dataSources);
 
-      if (copyDataSources[0].options) {
+      if (copyDataSources[0] && copyDataSources[0].options) {
         copyDataSources[0].options.sort(this.sortArray);
         copyDataSources[1].options.sort(this.sortArray);
       } else {
@@ -982,7 +983,9 @@ var render = function() {
         })
       ]),
       _vm._v(" "),
-      !_vm.selectOptions.length && !_vm.searchValue
+      !_vm.options.length
+        ? _c("div", { staticClass: "info" }, [_vm._v("\n      No data.\n    ")])
+        : !_vm.selectOptions.length && !_vm.searchValue
         ? _c("div", { staticClass: "info" }, [
             _vm._v("\n      Loading...\n    ")
           ])
@@ -1081,6 +1084,9 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+//
+//
+//
 //
 //
 //

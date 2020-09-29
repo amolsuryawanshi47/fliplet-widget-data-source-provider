@@ -15,7 +15,7 @@
     <div v-else class="main-data-source-provider">
       <section class="data-source-selector">
 
-        <div v-if="dataSources.length">
+        <div v-if="dataSources.length || !dataSources.length && !selectedDataSource">
 
           <Select2
             :options="dataSources"
@@ -288,7 +288,7 @@ export default {
     sortDataSourceEntries(dataSources) {
       const copyDataSources = [...dataSources];
 
-      if (copyDataSources[0].options) {
+      if (copyDataSources[0] && copyDataSources[0].options) {
         copyDataSources[0].options.sort(this.sortArray);
         copyDataSources[1].options.sort(this.sortArray);
       } else {
