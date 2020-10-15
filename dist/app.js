@@ -167,12 +167,6 @@ var render = function() {
       ? _c("div", { staticClass: "spinner-holder animated" }, [
           _c("div", { staticClass: "spinner-overlay" }, [_vm._v("Loading...")])
         ])
-      : _vm.hasError
-      ? _c(
-          "div",
-          { staticClass: "alert alert-danger", attrs: { role: "alert" } },
-          [_vm._v("\n    " + _vm._s(_vm.errorMessage) + "\n  ")]
-        )
       : _c("div", { staticClass: "main-data-source-provider" }, [
           _c("section", { staticClass: "data-source-selector" }, [
             _vm.dataSources.length ||
@@ -468,10 +462,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -481,8 +471,6 @@ __webpack_require__.r(__webpack_exports__);
       allDataSources: [],
       copyOfAllDataSources: [],
       isLoading: true,
-      hasError: false,
-      errorMessage: '',
       widgetData: {},
       selectedDataSource: null,
       dataSources: [],
@@ -493,6 +481,11 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   methods: {
+    showError: function showError(message) {
+      Fliplet.Modal.alert({
+        message: message
+      });
+    },
     initProvider: function initProvider() {
       this.widgetData = Fliplet.Widget.getData();
 
@@ -516,8 +509,7 @@ __webpack_require__.r(__webpack_exports__);
           _this.securityAdded = true;
         });
       })["catch"](function (err) {
-        _this.hasError = true;
-        _this.errorMessage = Fliplet.parseError(err);
+        _this.showError(Fliplet.parseError(err));
       })["finally"](function () {
         _this.isLoading = false;
       });
@@ -561,8 +553,7 @@ __webpack_require__.r(__webpack_exports__);
 
         _this2.hasAccessRules();
       })["catch"](function (err) {
-        _this2.hasError = true;
-        _this2.errorMessage = Fliplet.parseError(err);
+        _this2.showError(Fliplet.parseError(err));
       })["finally"](function () {
         _this2.isLoading = false;
       });
@@ -588,8 +579,7 @@ __webpack_require__.r(__webpack_exports__);
           return;
         }
 
-        _this3.errorMessage = Fliplet.parseError(err);
-        _this3.hasError = true;
+        _this3.showError(Fliplet.parseError(err));
       })["finally"](function () {
         _this3.isLoading = false;
         Fliplet.Widget.autosize();
@@ -619,8 +609,7 @@ __webpack_require__.r(__webpack_exports__);
 
         _this4.hasAccessRules();
       })["catch"](function (err) {
-        _this4.hasError = true;
-        _this4.errorMessage = Fliplet.parseError(err);
+        _this4.showError(Fliplet.parseError(err));
       })["finally"](function () {
         _this4.isLoading = false;
         Fliplet.Widget.autosize();
