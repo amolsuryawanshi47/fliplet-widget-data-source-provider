@@ -53,7 +53,7 @@
 
         <div v-show="selectedDataSource" @click="viewDataSource" class="btn btn-default btn-view-data-source">View data source</div>
 
-        <section v-show="selectedDataSource" class="security-notify">
+        <section v-show="showAccessRulesAlert" class="security-notify">
           <div v-if="!securityEnabled" class="alert alert-warning">
             <p><b>This data source is missing security rules.</b></p>
             <p>Configure security rules so the app can access the data</p>
@@ -90,6 +90,11 @@ export default {
       showAll: false,
       securityAdded: false
     };
+  },
+  computed: {
+    showAccessRulesAlert: function() {
+      return this.selectedDataSource && (this.widgetData.accessRules && this.widgetData.accessRules.length > 0);
+    }
   },
   methods: {
     initProvider() {
