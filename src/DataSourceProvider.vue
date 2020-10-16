@@ -8,10 +8,6 @@
       <div class="spinner-overlay">Loading...</div>
     </div>
 
-    <div v-else-if="hasError" class="alert alert-danger" role="alert">
-      {{ errorMessage }}
-    </div>
-
     <div v-else class="main-data-source-provider">
       <section class="data-source-selector">
 
@@ -80,8 +76,6 @@ export default {
       allDataSources: [],
       copyOfAllDataSources: [],
       isLoading: true,
-      hasError: false,
-      errorMessage: '',
       widgetData: {},
       selectedDataSource: null,
       dataSources: [],
@@ -97,6 +91,9 @@ export default {
     }
   },
   methods: {
+    showError: function(message) {
+      Fliplet.Modal.alert({ message });
+    },
     initProvider() {
       this.widgetData = Fliplet.Widget.getData();
 
@@ -121,8 +118,7 @@ export default {
             });
         })
         .catch(err => {
-          this.hasError = true;
-          this.errorMessage = Fliplet.parseError(err);
+          this.showError(Fliplet.parseError(err));
         })
         .finally(() => {
           this.isLoading = false;
@@ -167,8 +163,7 @@ export default {
           this.hasAccessRules();
         })
         .catch(err => {
-          this.hasError = true;
-          this.errorMessage = Fliplet.parseError(err);
+          this.showError(Fliplet.parseError(err));
         })
         .finally(() => {
           this.isLoading = false;
@@ -197,8 +192,7 @@ export default {
             return;
           }
 
-          this.errorMessage = Fliplet.parseError(err);
-          this.hasError = true;
+          this.showError(Fliplet.parseError(err));
         })
         .finally(() => {
           this.isLoading = false;
@@ -228,8 +222,7 @@ export default {
           this.hasAccessRules();
         })
         .catch(err => {
-          this.hasError = true;
-          this.errorMessage = Fliplet.parseError(err);
+          this.showError(Fliplet.parseError(err));
         })
         .finally(() => {
           this.isLoading = false;
