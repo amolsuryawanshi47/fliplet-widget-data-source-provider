@@ -560,6 +560,8 @@ __webpack_require__.r(__webpack_exports__);
         _this2.appDataSources.push(dataSource);
 
         _this2.hasAccessRules();
+
+        _this2.dataSources = _this2.formatDataSources();
       })["catch"](function (err) {
         _this2.hasError = true;
         _this2.errorMessage = Fliplet.parseError(err);
