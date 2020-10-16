@@ -315,8 +315,8 @@ var render = function() {
                   {
                     name: "show",
                     rawName: "v-show",
-                    value: _vm.selectedDataSource,
-                    expression: "selectedDataSource"
+                    value: _vm.showAccessRulesAlert,
+                    expression: "showAccessRulesAlert"
                   }
                 ],
                 staticClass: "security-notify"
@@ -491,6 +491,11 @@ __webpack_require__.r(__webpack_exports__);
       showAll: false,
       securityAdded: false
     };
+  },
+  computed: {
+    showAccessRulesAlert: function showAccessRulesAlert() {
+      return this.selectedDataSource && this.widgetData.accessRules && this.widgetData.accessRules.length > 0;
+    }
   },
   methods: {
     initProvider: function initProvider() {
