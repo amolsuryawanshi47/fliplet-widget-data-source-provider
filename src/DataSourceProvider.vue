@@ -161,6 +161,7 @@ export default {
 
           this.appDataSources.push(dataSource);
           this.hasAccessRules();
+          this.dataSources = this.formatDataSources();
         })
         .catch(err => {
           this.showError(Fliplet.parseError(err));
