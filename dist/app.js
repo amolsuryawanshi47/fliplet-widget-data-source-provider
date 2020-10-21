@@ -637,8 +637,11 @@ __webpack_require__.r(__webpack_exports__);
         options: []
       }];
       allDataSources[0].options = this.sortDataSourceEntries(this.appDataSources);
-      allDataSources[1].options = this.sortDataSourceEntries(this.getOtherAppsDataSources(this.allDataSources));
-      return allDataSources;
+      allDataSources[1].options = this.sortDataSourceEntries(this.getOtherAppsDataSources(this.allDataSources)); // Remove empty data source groups
+
+      return allDataSources.filter(function (group) {
+        return !!group.options.length;
+      });
     },
     getOtherAppsDataSources: function getOtherAppsDataSources(dataSources) {
       var _this5 = this;
@@ -653,7 +656,7 @@ __webpack_require__.r(__webpack_exports__);
       var id = data.id,
           name = data.name,
           text = data.text;
-      return "".concat(name || text, " ID: ").concat(id);
+      return "".concat(name || text, " (ID: ").concat(id, ")");
     },
     customDataSourceSearch: function customDataSourceSearch(condition, data) {
       // Return of this function should be the same as the array.filter function

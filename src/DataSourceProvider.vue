@@ -252,7 +252,8 @@ export default {
       allDataSources[0].options = this.sortDataSourceEntries(this.appDataSources);
       allDataSources[1].options = this.sortDataSourceEntries(this.getOtherAppsDataSources(this.allDataSources));
 
-      return allDataSources;
+      // Remove empty data source groups
+      return allDataSources.filter(group => !!group.options.length);
     },
     getOtherAppsDataSources(dataSources) {
       return dataSources.filter(dataSource => {
@@ -262,7 +263,7 @@ export default {
     formatDataSourceOption(data) {
       const { id, name, text } = data;
 
-      return `${name || text} ID: ${id}`;
+      return `${name || text} (ID: ${id})`;
     },
     customDataSourceSearch(condition, data) {
       // Return of this function should be the same as the array.filter function
