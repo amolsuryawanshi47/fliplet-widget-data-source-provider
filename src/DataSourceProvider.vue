@@ -98,7 +98,7 @@ export default {
   },
   methods: {
     onSelectChange: function(event) {
-      const id = event.target.value;
+      const id = parseInt(event.target.value, 10);
       let value;
 
       if (id === 'none') {
@@ -112,6 +112,13 @@ export default {
       }
 
       this.selectedDataSource = value;
+
+      if (value) {
+        this.hasAccessRules();
+      }
+
+      Fliplet.Widget.emit('dataSourceSelect', value);
+      Fliplet.Widget.autosize();
     },
     showError: function(message) {
       Fliplet.Modal.alert({ message });
@@ -394,20 +401,6 @@ export default {
         this.$nextTick(() => {
           this.isLoading = false;
         });
-      }
-    },
-    selectedDataSource: {
-      handler(dataSource) {
-        this.selectedDataSource = dataSource;
-
-        const data = dataSource || {};
-
-        if (dataSource) {
-          this.hasAccessRules();
-        }
-
-        Fliplet.Widget.emit('dataSourceSelect', data);
-        Fliplet.Widget.autosize();
       }
     }
   }

@@ -550,7 +550,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     onSelectChange: function onSelectChange(event) {
-      var id = event.target.value;
+      var id = parseInt(event.target.value, 10);
       var value;
 
       if (id === 'none') {
@@ -568,6 +568,13 @@ __webpack_require__.r(__webpack_exports__);
       }
 
       this.selectedDataSource = value;
+
+      if (value) {
+        this.hasAccessRules();
+      }
+
+      Fliplet.Widget.emit('dataSourceSelect', value);
+      Fliplet.Widget.autosize();
     },
     showError: function showError(message) {
       Fliplet.Modal.alert({
@@ -853,19 +860,6 @@ __webpack_require__.r(__webpack_exports__);
         this.$nextTick(function () {
           _this7.isLoading = false;
         });
-      }
-    },
-    selectedDataSource: {
-      handler: function handler(dataSource) {
-        this.selectedDataSource = dataSource;
-        var data = dataSource || {};
-
-        if (dataSource) {
-          this.hasAccessRules();
-        }
-
-        Fliplet.Widget.emit('dataSourceSelect', data);
-        Fliplet.Widget.autosize();
       }
     }
   }
