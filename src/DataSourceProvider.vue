@@ -399,6 +399,7 @@ export default {
     selectedDataSource: {
       handler(dataSource) {
         this.selectedDataSource = dataSource;
+
         const data = dataSource || {};
 
         if (dataSource) {
