@@ -187,12 +187,12 @@ var render = function() {
                           domProps: {
                             value: _vm.selectedDataSource
                               ? _vm.selectedDataSource.id
-                              : "none"
+                              : ""
                           },
                           on: { change: _vm.onSelectChange }
                         },
                         [
-                          _c("option", { attrs: { value: "none" } }, [
+                          _c("option", { attrs: { value: "" } }, [
                             _vm._v("-- Select data source")
                           ]),
                           _vm._v(" "),
@@ -563,7 +563,7 @@ __webpack_require__.r(__webpack_exports__);
       var id = parseInt(event.target.value, 10);
       var value;
 
-      if (id === 'none') {
+      if (!id) {
         value = null;
       } else if (this.allDataSources.length) {
         value = this.dataSources.find(function (group) {

@@ -18,9 +18,9 @@
               ref="select"
               class="hidden-select form-control"
               @change="onSelectChange"
-              :value="selectedDataSource ? selectedDataSource.id : 'none'"
+              :value="selectedDataSource ? selectedDataSource.id : ''"
             >
-              <option value="none">-- Select data source</option>
+              <option value>-- Select data source</option>
               <option v-if="!dataSources.length" value="none" disabled>(No data source found)</option>
               <template v-else-if="dataSources.length">
                 <template v-if="!!allDataSources.length">
@@ -106,7 +106,7 @@ export default {
       const id = parseInt(event.target.value, 10);
       let value;
 
-      if (id === 'none') {
+      if (!id) {
         value = null;
       } else if (this.allDataSources.length) {
         value = this.dataSources.find(group => {
