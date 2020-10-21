@@ -184,6 +184,11 @@ var render = function() {
                         {
                           ref: "select",
                           staticClass: "hidden-select form-control",
+                          domProps: {
+                            value: _vm.selectedDataSource
+                              ? _vm.selectedDataSource.id
+                              : "none"
+                          },
                           on: { change: _vm.onSelectChange }
                         },
                         [
@@ -452,6 +457,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _services_dataSource__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(12);
 
+//
+//
+//
+//
+//
 //
 //
 //

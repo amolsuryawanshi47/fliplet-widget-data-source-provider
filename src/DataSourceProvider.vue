@@ -14,7 +14,12 @@
         <div v-if="dataSources.length || !dataSources.length && !selectedDataSource">
 
           <label for="data-source-select" class="select-proxy-display">
-            <select ref="select" class="hidden-select form-control" @change="onSelectChange">
+            <select
+              ref="select"
+              class="hidden-select form-control"
+              @change="onSelectChange"
+              :value="selectedDataSource ? selectedDataSource.id : 'none'"
+            >
               <option value="none">-- Select data source</option>
               <option v-if="!dataSources.length" value="none" disabled>(No data source found)</option>
               <template v-else-if="dataSources.length">
