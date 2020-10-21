@@ -179,7 +179,6 @@ var render = function() {
                         options: _vm.dataSources,
                         selectedOption: _vm.selectedDataSource,
                         customOptionView: _vm.formatDataSourceOption,
-                        customSearch: _vm.customDataSourceSearch,
                         optionLabelKey: "name",
                         optionValueKey: "id",
                         selectWithGroups: !!_vm.allDataSources.length
@@ -395,7 +394,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_Select2_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(12);
 /* harmony import */ var _services_dataSource__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(18);
 
-//
 //
 //
 //
@@ -738,7 +736,7 @@ __webpack_require__.r(__webpack_exports__);
 
     Fliplet.Widget.onSaveRequest(function () {
       Fliplet.Widget.save({
-        id: _this6.selectedDataSource ? _this6.selectedDataSource.id : undefined
+        id: _this6.selectedDataSource ? _this6.selectedDataSource.id : null
       });
     });
   },
@@ -774,14 +772,15 @@ __webpack_require__.r(__webpack_exports__);
     },
     selectedDataSource: {
       handler: function handler(dataSource) {
+        this.selectedDataSource = dataSource;
+        var data = dataSource || {};
+
         if (dataSource) {
-          this.selectedDataSource = dataSource;
           this.hasAccessRules();
-          Fliplet.Widget.emit('dataSourceSelect', {
-            columns: dataSource.columns,
-            id: dataSource.id
-          });
         }
+
+        Fliplet.Widget.emit('dataSourceSelect', data);
+        Fliplet.Widget.autosize();
       }
     }
   }
@@ -927,138 +926,51 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("section", [
-    _c(
-      "div",
-      {
-        ref: "select",
-        staticClass: "select",
-        on: {
-          click: function() {
-            _vm.toggleSelect()
-          }
-        }
-      },
-      [
-        _c("div", { staticClass: "select-holder" }, [
-          _vm._v(_vm._s(_vm.setedOption || "-- Select an option"))
-        ])
-      ]
-    ),
-    _vm._v(" "),
-    _c("div", { staticClass: "options" }, [
-      _c("div", { staticClass: "search" }, [
-        _c("input", {
-          directives: [
-            {
-              name: "model",
-              rawName: "v-model.trim",
-              value: _vm.searchValue,
-              expression: "searchValue",
-              modifiers: { trim: true }
-            }
-          ],
-          attrs: { type: "text" },
-          domProps: { value: _vm.searchValue },
-          on: {
-            input: [
-              function($event) {
-                if ($event.target.composing) {
-                  return
-                }
-                _vm.searchValue = $event.target.value.trim()
-              },
-              function() {
-                _vm.search()
-              }
-            ],
-            blur: function($event) {
-              return _vm.$forceUpdate()
-            }
-          }
-        })
+  return _c(
+    "select",
+    {
+      ref: "select",
+      staticClass: "select",
+      on: { change: _vm.onSelectChange }
+    },
+    [
+      _c("option", { attrs: { value: "none" } }, [
+        _vm._v("-- Select data source")
       ]),
       _vm._v(" "),
       !_vm.options.length
-        ? _c("div", { staticClass: "info" }, [_vm._v("\n      No data.\n    ")])
-        : !_vm.selectOptions.length && !_vm.searchValue
-        ? _c("div", { staticClass: "info" }, [
-            _vm._v("\n      Loading...\n    ")
+        ? _c("option", { attrs: { value: "none", disabled: "" } }, [
+            _vm._v("(No data source found)")
           ])
-        : !_vm.selectOptions.length && _vm.searchValue
-        ? _c("div", { staticClass: "info" }, [
-            _vm._v("\n      No results found.\n    ")
-          ])
-        : _vm.selectOptions.length
-        ? _c(
-            "div",
-            [
-              _vm.selectWithGroups
-                ? _c(
-                    "div",
-                    _vm._l(_vm.selectOptions, function(group) {
+        : _vm.options.length
+        ? [
+            _vm.selectWithGroups
+              ? _vm._l(_vm.options, function(group) {
+                  return _c(
+                    "optgroup",
+                    { key: group.name, attrs: { label: group.name } },
+                    _vm._l(group.options, function(option) {
                       return _c(
-                        "div",
-                        { key: group.name, staticClass: "option-group" },
-                        [
-                          _c("span", { staticClass: "option-group-name" }, [
-                            _vm._v(_vm._s(group.name))
-                          ]),
-                          _vm._v(" "),
-                          _vm._l(group.options, function(option) {
-                            return _c(
-                              "div",
-                              {
-                                key: option.id,
-                                staticClass: "option",
-                                on: {
-                                  click: function() {
-                                    _vm.setOption(option)
-                                  }
-                                }
-                              },
-                              [
-                                _vm._v(
-                                  "\n            " +
-                                    _vm._s(_vm.optionView(option)) +
-                                    "\n          "
-                                )
-                              ]
-                            )
-                          })
-                        ],
-                        2
+                        "option",
+                        { key: option.id, domProps: { value: option.id } },
+                        [_vm._v(_vm._s(_vm.optionView(option)))]
                       )
                     }),
                     0
                   )
-                : _vm._l(_vm.selectOptions, function(option) {
-                    return _c(
-                      "div",
-                      {
-                        key: option.id,
-                        staticClass: "option",
-                        on: {
-                          click: function() {
-                            _vm.setOption(option)
-                          }
-                        }
-                      },
-                      [
-                        _vm._v(
-                          "\n        " +
-                            _vm._s(_vm.optionView(option)) +
-                            "\n      "
-                        )
-                      ]
-                    )
-                  })
-            ],
-            2
-          )
+                })
+              : _vm._l(_vm.options, function(option) {
+                  return _c(
+                    "option",
+                    { key: option.id, domProps: { value: option.id } },
+                    [_vm._v(_vm._s(_vm.optionView(option)))]
+                  )
+                })
+          ]
         : _vm._e()
-    ])
-  ])
+    ],
+    2
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -1097,25 +1009,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     options: {
@@ -1123,10 +1016,6 @@ __webpack_require__.r(__webpack_exports__);
       "default": function _default() {
         return [];
       }
-    },
-    customSearch: {
-      type: Function,
-      "default": null
     },
     customOptionView: {
       type: Function,
@@ -1149,61 +1038,26 @@ __webpack_require__.r(__webpack_exports__);
       "default": false
     }
   },
-  data: function data() {
-    return {
-      setedOption: '',
-      selectOptions: [],
-      searchValue: ''
-    };
-  },
   methods: {
-    toggleSelect: function toggleSelect(init) {
-      if (!init) {
-        this.$refs.select.classList.toggle('active');
-        Fliplet.Widget.autosize();
+    onSelectChange: function onSelectChange(event) {
+      var id = parseInt(event.target.value, 10);
+      var value;
+
+      if (id === 'none') {
+        value = null;
+      } else if (this.selectWithGroups) {
+        value = this.options.find(function (group) {
+          return group.options.find(function (option) {
+            return option.id === id;
+          });
+        });
+      } else {
+        value = this.options.find(function (option) {
+          return option.id === id;
+        });
       }
-    },
-    setOption: function setOption(value, init) {
-      this.setedOption = this.getSelectedOptionLabel(value);
+
       this.$emit('update:selectedOption', value);
-      this.toggleSelect(init);
-    },
-    getSelectedOptionValue: function getSelectedOptionValue(value) {
-      if (!this.optionValueKey) {
-        return value;
-      }
-
-      return value && value[this.optionValueKey];
-    },
-    getSelectedOptionLabel: function getSelectedOptionLabel(value) {
-      if (!this.optionLabelKey) {
-        return value;
-      }
-
-      return value && value[this.optionLabelKey];
-    },
-    search: function search(init) {
-      var _this = this;
-
-      if (this.customSearch) {
-        var optionsCopy = _.cloneDeep(this.options);
-
-        if (this.selectWithGroups && !init) {
-          this.selectOptions.forEach(function (group, index, originArray) {
-            originArray[index].options = optionsCopy[index].options.filter(function (option) {
-              return _this.customSearch(_this.searchValue, option);
-            });
-          });
-        } else {
-          this.selectOptions = optionsCopy.filter(function (option) {
-            return _this.customSearch(_this.searchValue, option);
-          });
-        }
-
-        return;
-      }
-
-      this.defaultSearch(this.searchValue);
     },
     optionView: function optionView(data) {
       if (this.customOptionView) {
@@ -1211,24 +1065,12 @@ __webpack_require__.r(__webpack_exports__);
       }
 
       return data;
-    },
-    defaultSearch: function defaultSearch(value) {
-      if (!value) {
-        this.selectOptions = _.cloneDeep(this.options);
-        return;
-      }
-
-      this.selectOptions = this.options.filter(function (option) {
-        return option.indexOf(value) !== -1;
-      });
-    },
-    initSelect2: function initSelect2() {
-      this.search(true);
-      this.setOption(this.selectedOption, true);
     }
   },
   mounted: function mounted() {
-    this.initSelect2();
+    if (this.selectedOption) {
+      this.$refs.select.value = this.selectedOption.id;
+    }
   }
 });
 

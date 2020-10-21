@@ -1,85 +1,13 @@
 .select {
-  .select-holder {
-    width: 90%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  & + .options {
-    display: none;
-  }
-
   display: flex;
   position: relative;
   width: 100%;
   height: 40px;
+  outline: none;
   padding-left: 15px;
   align-items: center;
   border: 1px solid rgba(51, 51, 51, 0.1);
   border-radius: 8px;
   background-color: transparent;
   cursor: pointer;
-
-  &.active + .options {
-    display: block;
-    max-height: 200px;
-    overflow: hidden;
-    overflow-y: auto; 
-    border: 1px solid rgba(51, 51, 51, 0.1);
-    border-radius: 8px;
-    background-color: transparent;
-
-    .option {
-      padding: 15px;
-      cursor: pointer;
-
-      &:hover {
-        background-color: #00abd1;
-        color: #fff;
-      }
-    }
-
-    .info {
-      padding: 15px;
-    }
-
-    .search {
-      margin-top: 10px;
-      padding: 10px;
-
-      input {
-        width: 100%;
-        height: 40px;
-        border: 1px solid rgba(51, 51, 51, 0.1);
-        border-radius: 8px;
-        background-color: transparent;
-  
-        &:focus {
-          padding-left: 10px;
-          border: 1px solid rgba(51, 51, 51, 0.5);
-          outline: none;
-        }
-      } 
-    }
-
-    .option-group {
-      padding-left: 15px;
-
-      .option-group-name {
-        font-weight: bold;
-        font-size: 1.1em;
-      }
-    }
-  }
-
-  &:after {
-    content: "";
-    position: absolute;
-    width: 0;
-    height: 0;
-    top: 14px;
-    right: 10px;
-    border: 6px solid transparent;
-    border-color: lightgray transparent transparent transparent;
-  }
 }

@@ -17,7 +17,6 @@
             :options="dataSources"
             :selectedOption.sync="selectedDataSource"
             :customOptionView="formatDataSourceOption"
-            :customSearch="customDataSourceSearch"
             :optionLabelKey="'name'"
             :optionValueKey="'id'"
             :selectWithGroups="!!allDataSources.length"
@@ -344,7 +343,7 @@ export default {
 
     // Transfer selected DataSource id to the parent
     Fliplet.Widget.onSaveRequest(() => {
-      Fliplet.Widget.save({ id: this.selectedDataSource ? this.selectedDataSource.id : undefined });
+      Fliplet.Widget.save({ id: this.selectedDataSource ? this.selectedDataSource.id : null });
     });
   },
   updated() {
@@ -378,15 +377,15 @@ export default {
     },
     selectedDataSource: {
       handler(dataSource) {
-        if (dataSource) {
-          this.selectedDataSource = dataSource;
-          this.hasAccessRules();
+        this.selectedDataSource = dataSource;
+        const data = dataSource || {};
 
-          Fliplet.Widget.emit('dataSourceSelect', {
-            columns: dataSource.columns,
-            id: dataSource.id
-          });
+        if (dataSource) {
+          this.hasAccessRules();
         }
+
+        Fliplet.Widget.emit('dataSourceSelect', data);
+        Fliplet.Widget.autosize();
       }
     }
   }

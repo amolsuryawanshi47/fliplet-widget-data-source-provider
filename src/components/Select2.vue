@@ -1,37 +1,18 @@
 <template>
-  <section>
-    <div ref="select" class="select" @click="() => { toggleSelect() }">
-      <div class="select-holder">{{ setedOption || '-- Select an option' }}</div>
-    </div>
-    <div class="options">
-      <div class="search">
-        <input @input="() => { search() }" type="text" v-model.trim="searchValue"/>
-      </div>
-      <div v-if="!options.length" class="info">
-        No data.
-      </div>
-      <div v-else-if="!selectOptions.length && !searchValue" class="info">
-        Loading...
-      </div>
-      <div v-else-if="!selectOptions.length && searchValue" class="info">
-        No results found.
-      </div>
-      <div v-else-if="selectOptions.length">
-        <div v-if="selectWithGroups">
-          <div v-for="group in selectOptions" :key="group.name" class="option-group">
-          <span class="option-group-name">{{ group.name }}</span>
-            <div v-for="option in group.options" @click="() => { setOption(option) }" :key="option.id" class="option">
-              {{ optionView(option) }}
-            </div>
-          </div>
-        </div>
-        <div v-else v-for="option in selectOptions" @click="() => { setOption(option) }" :key="option.id" class="option">
-          {{ optionView(option) }}
-        </div>
-      </div>
-
-    </div>
-  </section>
+  <select ref="select" class="select" @change="onSelectChange">
+    <option value="none">-- Select data source</option>
+    <option v-if="!options.length" value="none" disabled>(No data source found)</option>
+    <template v-else-if="options.length">
+      <template v-if="selectWithGroups">
+        <optgroup v-for="group in options" :key="group.name" :label="group.name">
+          <option v-for="option in group.options" :key="option.id" :value="option.id">{{ optionView(option) }}</option>
+        </optgroup>
+      </template>
+      <template v-else>
+        <option v-for="option in options" :key="option.id" :value="option.id">{{ optionView(option) }}</option>
+      </template>
+    </template>
+  </select>
 </template>
 
 <script>
@@ -42,10 +23,6 @@ export default {
       default() {
         return [];
       }
-    },
-    customSearch: {
-      type: Function,
-      default: null
     },
     customOptionView: {
       type: Function,
@@ -68,60 +45,22 @@ export default {
       default: false
     }
   },
-  data() {
-    return {
-      setedOption: '',
-      selectOptions: [],
-      searchValue: ''
-    };
-  },
   methods: {
-    toggleSelect(init) {
-      if (!init) {
-        this.$refs.select.classList.toggle('active');
+    onSelectChange(event) {
+      const id = parseInt(event.target.value, 10);
+      let value;
 
-        Fliplet.Widget.autosize();
+      if (id === 'none') {
+        value = null;
+      } else if (this.selectWithGroups) {
+        value = this.options.find(group => {
+          return group.options.find(option => option.id === id);
+        });
+      } else {
+        value = this.options.find(option => option.id === id);
       }
-    },
-    setOption(value, init) {
-      this.setedOption = this.getSelectedOptionLabel(value);
+
       this.$emit('update:selectedOption', value);
-      this.toggleSelect(init);
-    },
-    getSelectedOptionValue(value) {
-      if (!this.optionValueKey) {
-        return value;
-      }
-
-      return value && value[this.optionValueKey];
-    },
-    getSelectedOptionLabel(value) {
-      if (!this.optionLabelKey) {
-        return value;
-      }
-
-      return value && value[this.optionLabelKey];
-    },
-    search(init) {
-      if (this.customSearch) {
-        const optionsCopy = _.cloneDeep(this.options);
-
-        if (this.selectWithGroups && !init) {
-          this.selectOptions.forEach((group, index, originArray) => {
-            originArray[index].options = optionsCopy[index].options.filter(option => {
-              return this.customSearch(this.searchValue, option);
-            });
-          });
-        } else {
-          this.selectOptions = optionsCopy.filter(option => {
-            return this.customSearch(this.searchValue, option);
-          });
-        }
-
-        return;
-      }
-
-      this.defaultSearch(this.searchValue);
     },
     optionView(data) {
       if (this.customOptionView) {
@@ -129,24 +68,12 @@ export default {
       }
 
       return data;
-    },
-    defaultSearch(value) {
-      if (!value) {
-        this.selectOptions = _.cloneDeep(this.options);
-        return;
-      }
-
-      this.selectOptions = this.options.filter((option) => {
-        return option.indexOf(value) !== -1;
-      });
-    },
-    initSelect2() {
-      this.search(true);
-      this.setOption(this.selectedOption, true);
     }
   },
-  mounted: function() {
-    this.initSelect2();
+  mounted() {
+    if (this.selectedOption) {
+      this.$refs.select.value = this.selectedOption.id;
+    }
   }
 };
 </script>
