@@ -1,5 +1,5 @@
 <template>
-  <section>
+  <section class="container">
     <div class="data-source-title">
       <strong>{{ widgetData.dataSourceTitle || 'Select a data source' }}</strong>
     </div>
@@ -13,15 +13,23 @@
 
         <div v-if="dataSources.length || !dataSources.length && !selectedDataSource">
 
-          <Select2
-            :options="dataSources"
-            :selectedOption.sync="selectedDataSource"
-            :customOptionView="formatDataSourceOption"
-            :optionLabelKey="'name'"
-            :optionValueKey="'id'"
-            :selectWithGroups="!!allDataSources.length"
-          >
-          </Select2>
+          <label for="data-source-select" class="select-proxy-display">
+            <select ref="select" class="hidden-select form-control" @change="onSelectChange">
+              <option value="none">-- Select data source</option>
+              <option v-if="!dataSources.length" value="none" disabled>(No data source found)</option>
+              <template v-else-if="dataSources.length">
+                <template v-if="!!allDataSources.length">
+                  <optgroup v-for="group in dataSources" :key="group.name" :label="group.name">
+                    <option v-for="option in group.options" :key="option.id" :value="option.id">{{ formatDataSourceOption(option) }}</option>
+                  </optgroup>
+                </template>
+                <template v-else>
+                  <option v-for="option in dataSources" :key="option.id" :value="option.id">{{ formatDataSourceOption(option) }}</option>
+                </template>
+              </template>
+            </select>
+            <span class="icon fa fa-chevron-down"></span>
+          </label>
 
           <a @click.prevent="onDataSourceCreate" class="create-data-source" href="#">Create new data source</a>
 
@@ -65,7 +73,6 @@
 </template>
 
 <script>
-import Select2 from './components/Select2.vue';
 import { getDataSources, getDataSource, createDataSource, updateDataSourceSecurityRules } from './services/dataSource';
 
 export default {
@@ -90,6 +97,22 @@ export default {
     }
   },
   methods: {
+    onSelectChange: function(event) {
+      const id = event.target.value;
+      let value;
+
+      if (id === 'none') {
+        value = null;
+      } else if (this.allDataSources.length) {
+        value = this.dataSources.find(group => {
+          return group.options.find(option => option.id === id);
+        });
+      } else {
+        value = this.dataSources.find(option => option.id === id);
+      }
+
+      this.selectedDataSource = value;
+    },
     showError: function(message) {
       Fliplet.Modal.alert({ message });
     },
@@ -335,9 +358,6 @@ export default {
         }
       });
     }
-  },
-  components: {
-    Select2
   },
   mounted() {
     this.initProvider();

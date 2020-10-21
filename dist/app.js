@@ -107,7 +107,7 @@ new Vue({
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _DataSourceProvider_vue_vue_type_template_id_4de52e2f___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
 /* harmony import */ var _DataSourceProvider_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4);
-/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(17);
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(13);
 
 
 
@@ -156,7 +156,7 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("section", [
+  return _c("section", { staticClass: "container" }, [
     _c("div", { staticClass: "data-source-title" }, [
       _c("strong", [
         _vm._v(_vm._s(_vm.widgetData.dataSourceTitle || "Select a data source"))
@@ -171,92 +171,151 @@ var render = function() {
           _c("section", { staticClass: "data-source-selector" }, [
             _vm.dataSources.length ||
             (!_vm.dataSources.length && !_vm.selectedDataSource)
-              ? _c(
-                  "div",
-                  [
-                    _c("Select2", {
+              ? _c("div", [
+                  _c(
+                    "label",
+                    {
+                      staticClass: "select-proxy-display",
+                      attrs: { for: "data-source-select" }
+                    },
+                    [
+                      _c(
+                        "select",
+                        {
+                          ref: "select",
+                          staticClass: "hidden-select form-control",
+                          on: { change: _vm.onSelectChange }
+                        },
+                        [
+                          _c("option", { attrs: { value: "none" } }, [
+                            _vm._v("-- Select data source")
+                          ]),
+                          _vm._v(" "),
+                          !_vm.dataSources.length
+                            ? _c(
+                                "option",
+                                { attrs: { value: "none", disabled: "" } },
+                                [_vm._v("(No data source found)")]
+                              )
+                            : _vm.dataSources.length
+                            ? [
+                                !!_vm.allDataSources.length
+                                  ? _vm._l(_vm.dataSources, function(group) {
+                                      return _c(
+                                        "optgroup",
+                                        {
+                                          key: group.name,
+                                          attrs: { label: group.name }
+                                        },
+                                        _vm._l(group.options, function(option) {
+                                          return _c(
+                                            "option",
+                                            {
+                                              key: option.id,
+                                              domProps: { value: option.id }
+                                            },
+                                            [
+                                              _vm._v(
+                                                _vm._s(
+                                                  _vm.formatDataSourceOption(
+                                                    option
+                                                  )
+                                                )
+                                              )
+                                            ]
+                                          )
+                                        }),
+                                        0
+                                      )
+                                    })
+                                  : _vm._l(_vm.dataSources, function(option) {
+                                      return _c(
+                                        "option",
+                                        {
+                                          key: option.id,
+                                          domProps: { value: option.id }
+                                        },
+                                        [
+                                          _vm._v(
+                                            _vm._s(
+                                              _vm.formatDataSourceOption(option)
+                                            )
+                                          )
+                                        ]
+                                      )
+                                    })
+                              ]
+                            : _vm._e()
+                        ],
+                        2
+                      ),
+                      _vm._v(" "),
+                      _c("span", { staticClass: "icon fa fa-chevron-down" })
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "a",
+                    {
+                      staticClass: "create-data-source",
+                      attrs: { href: "#" },
+                      on: {
+                        click: function($event) {
+                          $event.preventDefault()
+                          return _vm.onDataSourceCreate($event)
+                        }
+                      }
+                    },
+                    [_vm._v("Create new data source")]
+                  ),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "checkbox checkbox-icon" }, [
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.showAll,
+                          expression: "showAll"
+                        }
+                      ],
                       attrs: {
-                        options: _vm.dataSources,
-                        selectedOption: _vm.selectedDataSource,
-                        customOptionView: _vm.formatDataSourceOption,
-                        optionLabelKey: "name",
-                        optionValueKey: "id",
-                        selectWithGroups: !!_vm.allDataSources.length
+                        type: "checkbox",
+                        name: "showAll",
+                        id: "showAll"
+                      },
+                      domProps: {
+                        checked: _vm.showAll,
+                        checked: Array.isArray(_vm.showAll)
+                          ? _vm._i(_vm.showAll, null) > -1
+                          : _vm.showAll
                       },
                       on: {
-                        "update:selectedOption": function($event) {
-                          _vm.selectedDataSource = $event
-                        },
-                        "update:selected-option": function($event) {
-                          _vm.selectedDataSource = $event
+                        change: function($event) {
+                          var $$a = _vm.showAll,
+                            $$el = $event.target,
+                            $$c = $$el.checked ? true : false
+                          if (Array.isArray($$a)) {
+                            var $$v = null,
+                              $$i = _vm._i($$a, $$v)
+                            if ($$el.checked) {
+                              $$i < 0 && (_vm.showAll = $$a.concat([$$v]))
+                            } else {
+                              $$i > -1 &&
+                                (_vm.showAll = $$a
+                                  .slice(0, $$i)
+                                  .concat($$a.slice($$i + 1)))
+                            }
+                          } else {
+                            _vm.showAll = $$c
+                          }
                         }
                       }
                     }),
                     _vm._v(" "),
-                    _c(
-                      "a",
-                      {
-                        staticClass: "create-data-source",
-                        attrs: { href: "#" },
-                        on: {
-                          click: function($event) {
-                            $event.preventDefault()
-                            return _vm.onDataSourceCreate($event)
-                          }
-                        }
-                      },
-                      [_vm._v("Create new data source")]
-                    ),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "checkbox checkbox-icon" }, [
-                      _c("input", {
-                        directives: [
-                          {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.showAll,
-                            expression: "showAll"
-                          }
-                        ],
-                        attrs: {
-                          type: "checkbox",
-                          name: "showAll",
-                          id: "showAll"
-                        },
-                        domProps: {
-                          checked: _vm.showAll,
-                          checked: Array.isArray(_vm.showAll)
-                            ? _vm._i(_vm.showAll, null) > -1
-                            : _vm.showAll
-                        },
-                        on: {
-                          change: function($event) {
-                            var $$a = _vm.showAll,
-                              $$el = $event.target,
-                              $$c = $$el.checked ? true : false
-                            if (Array.isArray($$a)) {
-                              var $$v = null,
-                                $$i = _vm._i($$a, $$v)
-                              if ($$el.checked) {
-                                $$i < 0 && (_vm.showAll = $$a.concat([$$v]))
-                              } else {
-                                $$i > -1 &&
-                                  (_vm.showAll = $$a
-                                    .slice(0, $$i)
-                                    .concat($$a.slice($$i + 1)))
-                              }
-                            } else {
-                              _vm.showAll = $$c
-                            }
-                          }
-                        }
-                      }),
-                      _vm._v(" "),
-                      _vm._m(0)
-                    ])
-                  ],
-                  1
-                )
+                    _vm._m(0)
+                  ])
+                ])
               : _vm.selectedDataSource && !_vm.changeDataSource
               ? _c("div", [
                   _c("div", { staticClass: "selected-data-source" }, [
@@ -391,8 +450,7 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6);
 /* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _components_Select2_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(12);
-/* harmony import */ var _services_dataSource__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(18);
+/* harmony import */ var _services_dataSource__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(12);
 
 //
 //
@@ -460,7 +518,14 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -484,6 +549,26 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   methods: {
+    onSelectChange: function onSelectChange(event) {
+      var id = event.target.value;
+      var value;
+
+      if (id === 'none') {
+        value = null;
+      } else if (this.allDataSources.length) {
+        value = this.dataSources.find(function (group) {
+          return group.options.find(function (option) {
+            return option.id === id;
+          });
+        });
+      } else {
+        value = this.dataSources.find(function (option) {
+          return option.id === id;
+        });
+      }
+
+      this.selectedDataSource = value;
+    },
     showError: function showError(message) {
       Fliplet.Modal.alert({
         message: message
@@ -503,7 +588,7 @@ __webpack_require__.r(__webpack_exports__);
 
       this.isLoading = true;
       this.selectedDataSource.accessRules = this.widgetData.accessRules;
-      Object(_services_dataSource__WEBPACK_IMPORTED_MODULE_2__["updateDataSourceSecurityRules"])(this.selectedDataSource.id, this.selectedDataSource.accessRules).then(function () {
+      Object(_services_dataSource__WEBPACK_IMPORTED_MODULE_1__["updateDataSourceSecurityRules"])(this.selectedDataSource.id, this.selectedDataSource.accessRules).then(function () {
         Fliplet.Modal.alert({
           message: 'Your changes have been applied to all affected apps.'
         }).then(function () {
@@ -541,7 +626,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this2 = this;
 
       this.isLoading = true;
-      Object(_services_dataSource__WEBPACK_IMPORTED_MODULE_2__["createDataSource"])(this.widgetData).then(function (dataSource) {
+      Object(_services_dataSource__WEBPACK_IMPORTED_MODULE_1__["createDataSource"])(this.widgetData).then(function (dataSource) {
         if (!dataSource) {
           return;
         }
@@ -566,7 +651,7 @@ __webpack_require__.r(__webpack_exports__);
     loadSelectedDataSource: function loadSelectedDataSource() {
       var _this3 = this;
 
-      Object(_services_dataSource__WEBPACK_IMPORTED_MODULE_2__["getDataSource"])(this.widgetData.dataSourceId).then(function (dataSource) {
+      Object(_services_dataSource__WEBPACK_IMPORTED_MODULE_1__["getDataSource"])(this.widgetData.dataSourceId).then(function (dataSource) {
         _this3.selectedDataSource = dataSource;
         Fliplet.Widget.emit('dataSourceSelect', {
           columns: _this3.selectedDataSource.columns,
@@ -593,7 +678,7 @@ __webpack_require__.r(__webpack_exports__);
     loadDataSources: function loadDataSources(appId) {
       var _this4 = this;
 
-      Object(_services_dataSource__WEBPACK_IMPORTED_MODULE_2__["getDataSources"])(appId).then(function (dataSources) {
+      Object(_services_dataSource__WEBPACK_IMPORTED_MODULE_1__["getDataSources"])(appId).then(function (dataSources) {
         if (_this4.widgetData.dataSourceId) {
           var selectedDataSourceFound = dataSources.some(function (dataSource) {
             return dataSource.id === _this4.selectedDataSource.id;
@@ -728,9 +813,6 @@ __webpack_require__.r(__webpack_exports__);
         }
       });
     }
-  },
-  components: {
-    Select2: _components_Select2_vue__WEBPACK_IMPORTED_MODULE_1__["default"]
   },
   mounted: function mounted() {
     var _this6 = this;
@@ -878,207 +960,52 @@ module.exports = _nonIterableSpread;
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _Select2_vue_vue_type_template_id_bfa75c94___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(13);
-/* harmony import */ var _Select2_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(15);
-/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(17);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getDataSources", function() { return getDataSources; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getDataSource", function() { return getDataSource; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createDataSource", function() { return createDataSource; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "updateDataSourceSecurityRules", function() { return updateDataSourceSecurityRules; });
+var getDataSources = function getDataSources(appId) {
+  var getOptions = appId ? {
+    appId: appId
+  } : {};
+  return Fliplet.DataSources.get(getOptions);
+};
+var getDataSource = function getDataSource(dataSourceId) {
+  return Fliplet.DataSources.getById(dataSourceId);
+};
+var createDataSource = function createDataSource(data) {
+  return Fliplet.Modal.prompt({
+    title: 'Enter a name for the data source',
+    value: data["default"].name || ''
+  }).then(function (dataSourceName) {
+    if (dataSourceName === null) {
+      return;
+    }
 
+    if (!dataSourceName) {
+      return Fliplet.Modal.alert({
+        message: 'Data source name can\'t be empty. Plaese enter data source name again.'
+      }).then(function () {
+        return createDataSource(data);
+      });
+    }
 
-
-
-
-/* normalize component */
-
-var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _Select2_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _Select2_vue_vue_type_template_id_bfa75c94___WEBPACK_IMPORTED_MODULE_0__["render"],
-  _Select2_vue_vue_type_template_id_bfa75c94___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "src/components/Select2.vue"
-/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+    return Fliplet.DataSources.create({
+      name: dataSourceName,
+      appId: data.appId,
+      entries: data["default"].entries,
+      columns: data["default"].columns
+    });
+  });
+};
+var updateDataSourceSecurityRules = function updateDataSourceSecurityRules(dataSourceId, securityRules) {
+  return Fliplet.DataSources.update(dataSourceId, {
+    accessRules: securityRules
+  });
+};
 
 /***/ }),
 /* 13 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Select2_vue_vue_type_template_id_bfa75c94___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(14);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Select2_vue_vue_type_template_id_bfa75c94___WEBPACK_IMPORTED_MODULE_0__["render"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Select2_vue_vue_type_template_id_bfa75c94___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
-
-
-
-/***/ }),
-/* 14 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c(
-    "select",
-    {
-      ref: "select",
-      staticClass: "select",
-      on: { change: _vm.onSelectChange }
-    },
-    [
-      _c("option", { attrs: { value: "none" } }, [
-        _vm._v("-- Select data source")
-      ]),
-      _vm._v(" "),
-      !_vm.options.length
-        ? _c("option", { attrs: { value: "none", disabled: "" } }, [
-            _vm._v("(No data source found)")
-          ])
-        : _vm.options.length
-        ? [
-            _vm.selectWithGroups
-              ? _vm._l(_vm.options, function(group) {
-                  return _c(
-                    "optgroup",
-                    { key: group.name, attrs: { label: group.name } },
-                    _vm._l(group.options, function(option) {
-                      return _c(
-                        "option",
-                        { key: option.id, domProps: { value: option.id } },
-                        [_vm._v(_vm._s(_vm.optionView(option)))]
-                      )
-                    }),
-                    0
-                  )
-                })
-              : _vm._l(_vm.options, function(option) {
-                  return _c(
-                    "option",
-                    { key: option.id, domProps: { value: option.id } },
-                    [_vm._v(_vm._s(_vm.optionView(option)))]
-                  )
-                })
-          ]
-        : _vm._e()
-    ],
-    2
-  )
-}
-var staticRenderFns = []
-render._withStripped = true
-
-
-
-/***/ }),
-/* 15 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_3_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Select2_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(16);
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_3_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Select2_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-/* 16 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-/* harmony default export */ __webpack_exports__["default"] = ({
-  props: {
-    options: {
-      type: Array,
-      "default": function _default() {
-        return [];
-      }
-    },
-    customOptionView: {
-      type: Function,
-      "default": null
-    },
-    selectedOption: {
-      type: Object,
-      "default": null
-    },
-    optionValueKey: {
-      type: String,
-      "default": ''
-    },
-    optionLabelKey: {
-      type: String,
-      "default": ''
-    },
-    selectWithGroups: {
-      type: Boolean,
-      "default": false
-    }
-  },
-  methods: {
-    onSelectChange: function onSelectChange(event) {
-      var id = parseInt(event.target.value, 10);
-      var value;
-
-      if (id === 'none') {
-        value = null;
-      } else if (this.selectWithGroups) {
-        value = this.options.find(function (group) {
-          return group.options.find(function (option) {
-            return option.id === id;
-          });
-        });
-      } else {
-        value = this.options.find(function (option) {
-          return option.id === id;
-        });
-      }
-
-      this.$emit('update:selectedOption', value);
-    },
-    optionView: function optionView(data) {
-      if (this.customOptionView) {
-        return this.customOptionView(data);
-      }
-
-      return data;
-    }
-  },
-  mounted: function mounted() {
-    if (this.selectedOption) {
-      this.$refs.select.value = this.selectedOption.id;
-    }
-  }
-});
-
-/***/ }),
-/* 17 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1183,56 +1110,6 @@ function normalizeComponent (
   }
 }
 
-
-/***/ }),
-/* 18 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getDataSources", function() { return getDataSources; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getDataSource", function() { return getDataSource; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createDataSource", function() { return createDataSource; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "updateDataSourceSecurityRules", function() { return updateDataSourceSecurityRules; });
-var getDataSources = function getDataSources(appId) {
-  var getOptions = appId ? {
-    appId: appId
-  } : {};
-  return Fliplet.DataSources.get(getOptions);
-};
-var getDataSource = function getDataSource(dataSourceId) {
-  return Fliplet.DataSources.getById(dataSourceId);
-};
-var createDataSource = function createDataSource(data) {
-  return Fliplet.Modal.prompt({
-    title: 'Enter a name for the data source',
-    value: data["default"].name || ''
-  }).then(function (dataSourceName) {
-    if (dataSourceName === null) {
-      return;
-    }
-
-    if (!dataSourceName) {
-      return Fliplet.Modal.alert({
-        message: 'Data source name can\'t be empty. Plaese enter data source name again.'
-      }).then(function () {
-        return createDataSource(data);
-      });
-    }
-
-    return Fliplet.DataSources.create({
-      name: dataSourceName,
-      appId: data.appId,
-      entries: data["default"].entries,
-      columns: data["default"].columns
-    });
-  });
-};
-var updateDataSourceSecurityRules = function updateDataSourceSecurityRules(dataSourceId, securityRules) {
-  return Fliplet.DataSources.update(dataSourceId, {
-    accessRules: securityRules
-  });
-};
 
 /***/ })
 /******/ ]);
