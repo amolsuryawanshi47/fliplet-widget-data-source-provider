@@ -109,8 +109,16 @@ export default {
       if (!id) {
         value = null;
       } else if (this.allDataSources.length) {
-        value = this.dataSources.find(group => {
-          return group.options.find(option => option.id === id);
+        this.dataSources.some(group => {
+          let selectedOption = group.options.find(option => option.id === id);
+
+          if (selectedOption) {
+            value = selectedOption;
+
+            return true;
+          }
+
+          return false;
         });
       } else {
         value = this.dataSources.find(option => option.id === id);
