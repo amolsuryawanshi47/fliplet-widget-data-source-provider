@@ -566,10 +566,17 @@ __webpack_require__.r(__webpack_exports__);
       if (!id) {
         value = null;
       } else if (this.allDataSources.length) {
-        value = this.dataSources.find(function (group) {
-          return group.options.find(function (option) {
+        this.dataSources.some(function (group) {
+          var selectedOption = group.options.find(function (option) {
             return option.id === id;
           });
+
+          if (selectedOption) {
+            value = selectedOption;
+            return true;
+          }
+
+          return false;
         });
       } else {
         value = this.dataSources.find(function (option) {
