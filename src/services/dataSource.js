@@ -1,11 +1,11 @@
 export const getDataSources = (appId) => {
-  const getOptions = appId ? {appId: appId } : {};
+  const getOptions = appId ? { appId: appId } : {};
 
   return Fliplet.DataSources.get(getOptions);
 };
 
 export const getDataSource = (dataSourceId) => {
-  return Fliplet.DataSources.getById(dataSourceId, {cache: false});
+  return Fliplet.DataSources.getById(dataSourceId, { cache: false });
 };
 
 export const createDataSource = (data) => {
