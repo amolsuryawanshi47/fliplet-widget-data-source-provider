@@ -140,7 +140,7 @@ export default {
       this.widgetData = Fliplet.Widget.getData();
 
       if (this.widgetData.dataSourceId) {
-        return this.loadSelectedDataSource();
+        return this.loadSelectedDataSource(this.widgetData.dataSourceId);
       }
 
       this.loadDataSources(this.widgetData.appId);
@@ -212,8 +212,8 @@ export default {
           this.isLoading = false;
         });
     },
-    loadSelectedDataSource() {
-      getDataSource(this.widgetData.dataSourceId)
+    loadSelectedDataSource(dataSourceId) {
+      getDataSource(dataSourceId)
         .then(dataSource => {
           this.selectedDataSource = dataSource;
 
@@ -385,6 +385,12 @@ export default {
     // Transfer selected DataSource id to the parent
     Fliplet.Widget.onSaveRequest(() => {
       Fliplet.Widget.save({ id: this.selectedDataSource ? this.selectedDataSource.id : null });
+    });
+
+    Fliplet.Studio.onMessage(event => {
+      if (event.data && event.data.event === 'overlay-close' && event.data.classes === 'data-source-overlay') {
+        this.loadSelectedDataSource(this.selectedDataSource.id);
+      }
     });
   },
   updated() {

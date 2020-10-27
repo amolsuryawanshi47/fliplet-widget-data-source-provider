@@ -5,7 +5,7 @@ export const getDataSources = (appId) => {
 };
 
 export const getDataSource = (dataSourceId) => {
-  return Fliplet.DataSources.getById(dataSourceId);
+  return Fliplet.DataSources.getById(dataSourceId, {cache: false});
 };
 
 export const createDataSource = (data) => {
