@@ -602,7 +602,7 @@ __webpack_require__.r(__webpack_exports__);
       this.widgetData = Fliplet.Widget.getData();
 
       if (this.widgetData.dataSourceId) {
-        return this.loadSelectedDataSource();
+        return this.loadSelectedDataSource(this.widgetData.dataSourceId);
       }
 
       this.loadDataSources(this.widgetData.appId);
@@ -672,10 +672,10 @@ __webpack_require__.r(__webpack_exports__);
         _this2.isLoading = false;
       });
     },
-    loadSelectedDataSource: function loadSelectedDataSource() {
+    loadSelectedDataSource: function loadSelectedDataSource(dataSourceId) {
       var _this3 = this;
 
-      Object(_services_dataSource__WEBPACK_IMPORTED_MODULE_1__["getDataSource"])(this.widgetData.dataSourceId).then(function (dataSource) {
+      Object(_services_dataSource__WEBPACK_IMPORTED_MODULE_1__["getDataSource"])(dataSourceId).then(function (dataSource) {
         _this3.selectedDataSource = dataSource;
         Fliplet.Widget.emit('dataSourceSelect', {
           columns: _this3.selectedDataSource.columns,
@@ -848,6 +848,11 @@ __webpack_require__.r(__webpack_exports__);
         id: _this6.selectedDataSource ? _this6.selectedDataSource.id : null
       });
     });
+    Fliplet.Studio.onMessage(function (event) {
+      if (event.data && event.data.event === 'overlay-close' && event.data.classes === 'data-source-overlay') {
+        _this6.loadSelectedDataSource(_this6.selectedDataSource.id);
+      }
+    });
   },
   updated: function updated() {
     Fliplet.Widget.autosize();
@@ -982,7 +987,9 @@ var getDataSources = function getDataSources(appId) {
   return Fliplet.DataSources.get(getOptions);
 };
 var getDataSource = function getDataSource(dataSourceId) {
-  return Fliplet.DataSources.getById(dataSourceId);
+  return Fliplet.DataSources.getById(dataSourceId, {
+    cache: false
+  });
 };
 var createDataSource = function createDataSource(data) {
   return Fliplet.Modal.prompt({
