@@ -204,6 +204,8 @@ export default {
           this.appDataSources.push(dataSource);
           this.hasAccessRules();
           this.dataSources = this.formatDataSources();
+
+          Fliplet.Widget.emit('dataSourceSelect', dataSource);
         })
         .catch(err => {
           this.showError(Fliplet.parseError(err));
