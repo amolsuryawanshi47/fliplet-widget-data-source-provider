@@ -10,9 +10,7 @@
 
     <div v-else class="main-data-source-provider">
       <section class="data-source-selector">
-
-        <div v-if="dataSources.length || !dataSources.length && !selectedDataSource">
-
+        <div v-if="dataSources.length || (!dataSources.length && !selectedDataSource)">
           <label for="data-source-select" class="select-proxy-display">
             <select
               ref="select"
@@ -25,11 +23,15 @@
               <template v-else-if="dataSources.length">
                 <template v-if="!!allDataSources.length">
                   <optgroup v-for="group in dataSources" :key="group.name" :label="group.name">
-                    <option v-for="option in group.options" :key="option.id" :value="option.id">{{ formatDataSourceOption(option) }}</option>
+                    <option v-for="option in group.options" :key="option.id" :value="option.id">{{
+                      formatDataSourceOption(option)
+                    }}</option>
                   </optgroup>
                 </template>
                 <template v-else>
-                  <option v-for="option in dataSources" :key="option.id" :value="option.id">{{ formatDataSourceOption(option) }}</option>
+                  <option v-for="option in dataSources" :key="option.id" :value="option.id">{{
+                    formatDataSourceOption(option)
+                  }}</option>
                 </template>
               </template>
             </select>
@@ -47,7 +49,6 @@
               Show all data sources
             </label>
           </div>
-
         </div>
 
         <div v-else-if="selectedDataSource && !changeDataSource">
@@ -59,7 +60,9 @@
           </div>
         </div>
 
-        <div v-show="selectedDataSource" @click="viewDataSource" class="btn btn-default btn-view-data-source">View data source</div>
+        <div v-show="selectedDataSource" @click="viewDataSource" class="btn btn-default btn-view-data-source">
+          View data source
+        </div>
 
         <section v-show="showAccessRulesAlert" class="security-notify">
           <div v-if="!securityEnabled" class="alert alert-warning">
@@ -71,7 +74,6 @@
             Security rules added. To manage security rules click <b>View data source</b> above.
           </div>
         </section>
-
       </section>
     </div>
   </section>
@@ -147,17 +149,23 @@ export default {
     },
     onAddDefaultSecurity() {
       this.isLoading = true;
-      this.selectedDataSource.accessRules = this.widgetData.accessRules;
+
+      if (this.selectedDataSource.accessRules && this.selectedDataSource.accessRules.length > 0) {
+        this.widgetData.accessRules.forEach(defaultRule => {
+          this.selectedDataSource.accessRules.push(defaultRule);
+        });
+      } else {
+        this.selectedDataSource.accessRules = this.widgetData.accessRules;
+      }
 
       updateDataSourceSecurityRules(this.selectedDataSource.id, this.selectedDataSource.accessRules)
         .then(() => {
           Fliplet.Modal.alert({
             message: 'Your changes have been applied to all affected apps.'
-          })
-            .then(() => {
-              this.hasAccessRules();
-              this.securityAdded = true;
-            });
+          }).then(() => {
+            this.hasAccessRules();
+            this.securityAdded = true;
+          });
         })
         .catch(err => {
           this.showError(Fliplet.parseError(err));
@@ -174,6 +182,24 @@ export default {
 
       if (this.selectedDataSource.accessRules === null || !this.selectedDataSource.accessRules.length) {
         this.securityEnabled = false;
+        return;
+      }
+
+      let includedAccessTypes = [];
+
+      this.selectedDataSource.accessRules.forEach(dataSourceRules => {
+        this.widgetData.accessRules.forEach(componentRules => {
+          componentRules.type.forEach(componentType => {
+            if (dataSourceRules.type.includes(componentType)) {
+              includedAccessTypes.push(componentType);
+            }
+          });
+        });
+      });
+
+      if (includedAccessTypes.length !== this.widgetData.accessRules[0].type.length) {
+        this.securityEnabled = false;
+
         return;
       }
 
@@ -219,12 +245,7 @@ export default {
         .then(dataSource => {
           this.selectedDataSource = dataSource;
 
-          Fliplet.Widget.emit('dataSourceSelect',
-            {
-              columns: this.selectedDataSource.columns,
-              id: this.selectedDataSource.id
-            }
-          );
+          Fliplet.Widget.emit('dataSourceSelect', this.selectedDataSource);
 
           this.hasAccessRules();
         })

@@ -362,7 +362,7 @@ var render = function() {
                 staticClass: "btn btn-default btn-view-data-source",
                 on: { click: _vm.viewDataSource }
               },
-              [_vm._v("View data source")]
+              [_vm._v("\n        View data source\n      ")]
             ),
             _vm._v(" "),
             _c(
@@ -536,6 +536,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -611,7 +613,15 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       this.isLoading = true;
-      this.selectedDataSource.accessRules = this.widgetData.accessRules;
+
+      if (this.selectedDataSource.accessRules && this.selectedDataSource.accessRules.length > 0) {
+        this.widgetData.accessRules.forEach(function (defaultRule) {
+          _this.selectedDataSource.accessRules.push(defaultRule);
+        });
+      } else {
+        this.selectedDataSource.accessRules = this.widgetData.accessRules;
+      }
+
       Object(_services_dataSource__WEBPACK_IMPORTED_MODULE_1__["updateDataSourceSecurityRules"])(this.selectedDataSource.id, this.selectedDataSource.accessRules).then(function () {
         Fliplet.Modal.alert({
           message: 'Your changes have been applied to all affected apps.'
@@ -627,12 +637,30 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     hasAccessRules: function hasAccessRules() {
+      var _this2 = this;
+
       if (!this.selectedDataSource) {
         this.securityEnabled = false;
         return;
       }
 
       if (this.selectedDataSource.accessRules === null || !this.selectedDataSource.accessRules.length) {
+        this.securityEnabled = false;
+        return;
+      }
+
+      var includedAccessTypes = [];
+      this.selectedDataSource.accessRules.forEach(function (dataSourceRules) {
+        _this2.widgetData.accessRules.forEach(function (componentRules) {
+          componentRules.type.forEach(function (componentType) {
+            if (dataSourceRules.type.includes(componentType)) {
+              includedAccessTypes.push(componentType);
+            }
+          });
+        });
+      });
+
+      if (includedAccessTypes.length !== this.widgetData.accessRules[0].type.length) {
         this.securityEnabled = false;
         return;
       }
@@ -647,7 +675,7 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     onDataSourceCreate: function onDataSourceCreate() {
-      var _this2 = this;
+      var _this3 = this;
 
       this.isLoading = true;
       Object(_services_dataSource__WEBPACK_IMPORTED_MODULE_1__["createDataSource"])(this.widgetData).then(function (dataSource) {
@@ -655,78 +683,75 @@ __webpack_require__.r(__webpack_exports__);
           return;
         }
 
-        _this2.selectedDataSource = dataSource;
+        _this3.selectedDataSource = dataSource;
 
-        if (_this2.allDataSources.length) {
-          _this2.allDataSources.push(dataSource);
+        if (_this3.allDataSources.length) {
+          _this3.allDataSources.push(dataSource);
         }
 
-        _this2.appDataSources.push(dataSource);
+        _this3.appDataSources.push(dataSource);
 
-        _this2.hasAccessRules();
+        _this3.hasAccessRules();
 
         _this2.dataSources = _this2.formatDataSources();
         Fliplet.Widget.emit('dataSourceSelect', dataSource);
       })["catch"](function (err) {
-        _this2.showError(Fliplet.parseError(err));
+        _this3.showError(Fliplet.parseError(err));
       })["finally"](function () {
-        _this2.isLoading = false;
+        _this3.isLoading = false;
       });
     },
     loadSelectedDataSource: function loadSelectedDataSource(dataSourceId) {
-      var _this3 = this;
+      var _this4 = this;
 
       Object(_services_dataSource__WEBPACK_IMPORTED_MODULE_1__["getDataSource"])(dataSourceId).then(function (dataSource) {
-        _this3.selectedDataSource = dataSource;
-        Fliplet.Widget.emit('dataSourceSelect', {
-          columns: _this3.selectedDataSource.columns,
-          id: _this3.selectedDataSource.id
-        });
+        _this4.selectedDataSource = dataSource;
+        Fliplet.Widget.emit('dataSourceSelect', _this4.selectedDataSource);
 
-        _this3.hasAccessRules();
+        _this4.hasAccessRules();
       })["catch"](function (err) {
         if (err.status === 404) {
-          _this3.selectedDataSource = null;
-          _this3.widgetData.dataSourceId = null;
+          _this4.selectedDataSource = null;
+          _this4.widgetData.dataSourceId = null;
 
-          _this3.loadDataSources(_this3.widgetData.appId);
+          _this4.loadDataSources(_this4.widgetData.appId);
 
           return;
         }
 
-        _this3.showError(Fliplet.parseError(err));
+        _this4.showError(Fliplet.parseError(err));
       })["finally"](function () {
-        _this3.isLoading = false;
+        _this4.isLoading = false;
         Fliplet.Widget.autosize();
       });
     },
     loadDataSources: function loadDataSources(appId) {
-      var _this4 = this;
+      var _this5 = this;
 
       Object(_services_dataSource__WEBPACK_IMPORTED_MODULE_1__["getDataSources"])(appId).then(function (dataSources) {
-        if (_this4.widgetData.dataSourceId) {
+        if (_this5.widgetData.dataSourceId) {
           var selectedDataSourceFound = dataSources.some(function (dataSource) {
-            return dataSource.id === _this4.selectedDataSource.id;
+            return dataSource.id === _this5.selectedDataSource.id;
           });
 
           if (!selectedDataSourceFound) {
-            dataSources.push(_this4.selectedDataSource);
+            dataSources.push(_this5.selectedDataSource);
           }
         }
 
         if (appId) {
-          _this4.appDataSources = dataSources.filter(_this4.filterNotUsersDataSources);
+          _this5.appDataSources = dataSources.filter(_this5.filterNotUsersDataSources);
         } else {
-          _this4.allDataSources = dataSources.filter(_this4.filterNotUsersDataSources);
+          _this5.allDataSources = dataSources.filter(_this5.filterNotUsersDataSources);
         }
 
-        _this4.dataSources = _this4.formatDataSources();
+        _this5.dataSources = _this5.formatDataSources();
 
-        _this4.hasAccessRules();
+        _this5.hasAccessRules();
       })["catch"](function (err) {
-        _this4.showError(Fliplet.parseError(err));
+        _this5.showError(Fliplet.parseError(err));
       })["finally"](function () {
-        _this4.isLoading = false;
+        _this5.isLoading = false;
         Fliplet.Widget.autosize();
       });
     },
@@ -754,10 +779,10 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     getOtherAppsDataSources: function getOtherAppsDataSources(dataSources) {
-      var _this5 = this;
+      var _this6 = this;
 
       return dataSources.filter(function (dataSource) {
-        return _this5.appDataSources.findIndex(function (currDS) {
+        return _this6.appDataSources.findIndex(function (currDS) {
           return currDS.id === dataSource.id;
         }) === -1;
       });
@@ -840,18 +865,18 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   mounted: function mounted() {
-    var _this6 = this;
+    var _this7 = this;
 
     this.initProvider(); // Transfer selected DataSource id to the parent
 
     Fliplet.Widget.onSaveRequest(function () {
       Fliplet.Widget.save({
-        id: _this6.selectedDataSource ? _this6.selectedDataSource.id : null
+        id: _this7.selectedDataSource ? _this7.selectedDataSource.id : null
       });
     });
     Fliplet.Studio.onMessage(function (event) {
       if (event.data && event.data.event === 'overlay-close' && event.data.classes === 'data-source-overlay') {
-        _this6.loadSelectedDataSource(_this6.selectedDataSource.id);
+        _this7.loadSelectedDataSource(_this7.selectedDataSource.id);
       }
     });
   },
@@ -861,7 +886,7 @@ __webpack_require__.r(__webpack_exports__);
   watch: {
     showAll: {
       handler: function handler(value) {
-        var _this7 = this;
+        var _this8 = this;
 
         this.isLoading = true;
         this.dataSources = [];
@@ -881,7 +906,7 @@ __webpack_require__.r(__webpack_exports__);
         this.dataSources = this.formatDataSources(); // Give VUE time to reset templates
 
         this.$nextTick(function () {
-          _this7.isLoading = false;
+          _this8.isLoading = false;
         });
       }
     }
