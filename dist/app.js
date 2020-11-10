@@ -659,6 +659,7 @@ __webpack_require__.r(__webpack_exports__);
           });
         });
       });
+      includedAccessTypes = _.uniq(includedAccessTypes);
 
       if (includedAccessTypes.length !== this.widgetData.accessRules[0].type.length) {
         this.securityEnabled = false;
