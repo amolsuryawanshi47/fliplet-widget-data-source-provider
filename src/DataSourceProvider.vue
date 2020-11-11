@@ -4,11 +4,14 @@
       <strong>{{ widgetData.dataSourceTitle || 'Select a data source' }}</strong>
     </div>
 
-    <div v-if="isLoading" class="spinner-holder animated">
+    <div v-if="isLoading" class="spinner-container animated">
       <div class="spinner-overlay">Loading...</div>
     </div>
 
-    <div v-else class="main-data-source-provider">
+    <div
+      class="main-data-source-provider"
+      :class="{ 'select-overlay': isLoading }"
+    >
       <section class="data-source-selector">
         <div v-if="dataSources.length || (!dataSources.length && !selectedDataSource)">
           <label for="data-source-select" class="select-proxy-display">
@@ -197,9 +200,7 @@ export default {
         });
       });
 
-      includedAccessTypes = _.uniq(includedAccessTypes);
-
-      if (includedAccessTypes.length !== this.widgetData.accessRules[0].type.length) {
+      if (this.widgetData.accessRules.length && includedAccessTypes.length !== this.widgetData.accessRules[0].type.length) {
         this.securityEnabled = false;
 
         return;
@@ -215,9 +216,7 @@ export default {
       }
     },
     onDataSourceCreate() {
-      this.isLoading = true;
-
-      createDataSource(this.widgetData)
+      createDataSource(this.widgetData, this)
         .then(dataSource => {
           if (!dataSource) {
             return;
