@@ -866,7 +866,8 @@ __webpack_require__.r(__webpack_exports__);
           data: {
             context: 'overlay',
             dataSourceId: this.selectedDataSource.id
-          }
+          },
+          helpLink: 'https://help.fliplet.com/data-sources/'
         }
       });
     }

@@ -398,7 +398,8 @@ export default {
           data: {
             context: 'overlay',
             dataSourceId: this.selectedDataSource.id
-          }
+          },
+          helpLink: 'https://help.fliplet.com/data-sources/'
         }
       });
     }
