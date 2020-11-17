@@ -200,6 +200,8 @@ export default {
         });
       });
 
+      includedAccessTypes = _.uniq(includedAccessTypes);
+
       if (this.widgetData.accessRules.length && includedAccessTypes.length !== this.widgetData.accessRules[0].type.length) {
         this.securityEnabled = false;
 
