@@ -1,11 +1,15 @@
-export const getDataSources = (appId) => {
-  const getOptions = appId ? { appId: appId } : {};
+export const getDataSources = appId => {
+  const getOptions = { attributes: 'id,name,accessRules,columns,type' };
+
+  if (appId) {
+    getOptions.appId = appId;
+  }
 
   return Fliplet.DataSources.get(getOptions);
 };
 
-export const getDataSource = (dataSourceId) => {
-  return Fliplet.DataSources.getById(dataSourceId, { cache: false });
+export const getDataSource = dataSourceId => {
+  return Fliplet.DataSources.getById(dataSourceId, { cache: false, attributes: 'id,name,accessRules,columns,type' });
 };
 
 export const createDataSource = (data, context) => {
