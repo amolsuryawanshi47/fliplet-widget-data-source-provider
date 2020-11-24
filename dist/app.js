@@ -1017,7 +1017,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "updateDataSourceSecurityRules", function() { return updateDataSourceSecurityRules; });
 var getDataSources = function getDataSources(appId) {
   var getOptions = {
-    attributes: 'id,name,accessRules,columns,type'
+    attributes: 'id,name,accessRules,columns,type,definition'
   };
 
   if (appId) {
@@ -1029,7 +1029,7 @@ var getDataSources = function getDataSources(appId) {
 var getDataSource = function getDataSource(dataSourceId) {
   return Fliplet.DataSources.getById(dataSourceId, {
     cache: false,
-    attributes: 'id,name,accessRules,columns,type'
+    attributes: 'id,name,accessRules,columns,type,definition'
   });
 };
 var createDataSource = function createDataSource(data, context) {

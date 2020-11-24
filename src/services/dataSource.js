@@ -1,5 +1,5 @@
 export const getDataSources = appId => {
-  const getOptions = { attributes: 'id,name,accessRules,columns,type' };
+  const getOptions = { attributes: 'id,name,accessRules,columns,type,definition' };
 
   if (appId) {
     getOptions.appId = appId;
@@ -9,7 +9,7 @@ export const getDataSources = appId => {
 };
 
 export const getDataSource = dataSourceId => {
-  return Fliplet.DataSources.getById(dataSourceId, { cache: false, attributes: 'id,name,accessRules,columns,type' });
+  return Fliplet.DataSources.getById(dataSourceId, { cache: false, attributes: 'id,name,accessRules,columns,type,definition' });
 };
 
 export const createDataSource = (data, context) => {
