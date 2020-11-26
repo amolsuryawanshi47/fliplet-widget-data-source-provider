@@ -748,9 +748,9 @@ __webpack_require__.r(__webpack_exports__);
         }
 
         if (appId) {
-          _this5.appDataSources = dataSources.filter(_this5.filterNotUsersDataSources);
+          _this5.appDataSources = dataSources;
         } else {
-          _this5.allDataSources = dataSources.filter(_this5.filterNotUsersDataSources);
+          _this5.allDataSources = dataSources;
         }
 
         _this5.dataSources = _this5.formatDataSources();
@@ -762,9 +762,6 @@ __webpack_require__.r(__webpack_exports__);
         _this5.isLoading = false;
         Fliplet.Widget.autosize();
       });
-    },
-    filterNotUsersDataSources: function filterNotUsersDataSources(dataSource) {
-      return !dataSource.type;
     },
     formatDataSources: function formatDataSources() {
       // If the otherDataSources array is empty it means that we show the user only data sources for the current app
@@ -1017,11 +1014,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "updateDataSourceSecurityRules", function() { return updateDataSourceSecurityRules; });
 var getDataSources = function getDataSources(appId) {
   var getOptions = {
-    attributes: 'id,name,accessRules,columns,type,definition'
+    attributes: 'id,name,accessRules,columns,appId,definition',
+    type: null
   };
 
   if (appId) {
     getOptions.appId = appId;
+    getOptions.includeInUse = true;
   }
 
   return Fliplet.DataSources.get(getOptions);
@@ -1029,7 +1028,7 @@ var getDataSources = function getDataSources(appId) {
 var getDataSource = function getDataSource(dataSourceId) {
   return Fliplet.DataSources.getById(dataSourceId, {
     cache: false,
-    attributes: 'id,name,accessRules,columns,type,definition'
+    attributes: 'id,name,accessRules,columns,definition'
   });
 };
 var createDataSource = function createDataSource(data, context) {

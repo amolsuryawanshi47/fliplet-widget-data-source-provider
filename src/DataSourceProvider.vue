@@ -282,9 +282,9 @@ export default {
           }
 
           if (appId) {
-            this.appDataSources = dataSources.filter(this.filterNotUsersDataSources);
+            this.appDataSources = dataSources;
           } else {
-            this.allDataSources = dataSources.filter(this.filterNotUsersDataSources);
+            this.allDataSources = dataSources;
           }
 
           this.dataSources = this.formatDataSources();
@@ -297,9 +297,6 @@ export default {
           this.isLoading = false;
           Fliplet.Widget.autosize();
         });
-    },
-    filterNotUsersDataSources(dataSource) {
-      return !dataSource.type;
     },
     formatDataSources() {
       // If the otherDataSources array is empty it means that we show the user only data sources for the current app
