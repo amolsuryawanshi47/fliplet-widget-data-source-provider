@@ -967,7 +967,18 @@ __webpack_require__.r(__webpack_exports__);
           this.allDataSources = [];
         }
 
-        this.dataSources = this.formatDataSources(); // Give VUE time to reset templates
+        this.dataSources = this.formatDataSources();
+
+        if (this.selectedDataSource) {
+          var targetSources = this.allDataSources.length ? this.allDataSources : this.dataSources;
+
+          if (!targetSources.some(function (currDS) {
+            return currDS.id === _this8.selectedDataSource.id;
+          })) {
+            this.selectedDataSource = null;
+          }
+        } // Give VUE time to reset templates
+
 
         this.$nextTick(function () {
           _this9.isLoading = false;
