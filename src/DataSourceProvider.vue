@@ -91,6 +91,7 @@ export default {
       appDataSources: [],
       allDataSources: [],
       copyOfAllDataSources: [],
+      missingAccessTypes: [],
       isLoading: true,
       widgetData: {},
       selectedDataSource: null,
@@ -154,7 +155,9 @@ export default {
       this.isLoading = true;
 
       if (this.selectedDataSource.accessRules && this.selectedDataSource.accessRules.length > 0) {
-        this.widgetData.accessRules.forEach(defaultRule => {
+        this.widgetData.accessRules.forEach((defaultRule, index, array) => {
+          array[index].type = this.missingAccessTypes;
+
           this.selectedDataSource.accessRules.push(defaultRule);
         });
       } else {
@@ -185,10 +188,17 @@ export default {
 
       if (this.selectedDataSource.accessRules === null || !this.selectedDataSource.accessRules.length) {
         this.securityEnabled = false;
+        this.missingAccessTypes = this.widgetData.accessRules.map(rule => {
+          return rule.type.map(accessType => {
+            return accessType;
+          });
+        });
         return;
       }
 
       let includedAccessTypes = [];
+
+      this.missingAccessTypes = [];
 
       this.selectedDataSource.accessRules.forEach(dataSourceRules => {
         this.widgetData.accessRules.forEach(componentRules => {
@@ -202,7 +212,17 @@ export default {
 
       includedAccessTypes = _.uniq(includedAccessTypes);
 
-      if (this.widgetData.accessRules.length && includedAccessTypes.length !== this.widgetData.accessRules[0].type.length) {
+      this.widgetData.accessRules.forEach(defaultRule => {
+        defaultRule.type.forEach(defaultType => {
+          if (!includedAccessTypes.includes(defaultType)) {
+            this.missingAccessTypes.push(defaultType);
+          }
+        });
+      });
+
+      this.missingAccessTypes = _.uniq(this.missingAccessTypes);
+
+      if (this.missingAccessTypes.length) {
         this.securityEnabled = false;
 
         return;
@@ -401,6 +421,27 @@ export default {
           helpLink: 'https://help.fliplet.com/data-sources/'
         }
       });
+    },
+    confirmAccessRules() {
+      const message = `To use this feature, <code>${this.missingAccessTypes
+        .join(', ')
+        .toUpperCase()}</code> access must be added to the data source`;
+
+      Fliplet.Modal.confirm({
+        message: message,
+        buttons: {
+          confirm: {
+            label: 'Add security rule'
+          },
+          cancel: {
+            label: 'I\'ll do it later'
+          }
+        }
+      }).then(result => {
+        if (result) {
+          this.onAddDefaultSecurity();
+        }
+      });
     }
   },
   mounted() {
@@ -412,8 +453,27 @@ export default {
     });
 
     Fliplet.Studio.onMessage(event => {
-      if (event.data && event.data.event === 'overlay-close' && event.data.classes === 'data-source-overlay') {
-        this.loadSelectedDataSource(this.selectedDataSource.id);
+      if (event.data) {
+        switch (event.data.event) {
+          case 'overlay-close':
+            if (event.data.classes === 'data-source-overlay') {
+              this.loadSelectedDataSource(this.selectedDataSource.id);
+            }
+
+            break;
+          case 'update-security-rules':
+            this.widgetData.accessRules = event.data.accessRules;
+
+            this.hasAccessRules();
+
+            if (!this.securityEnabled && this.selectedDataSource) {
+              this.confirmAccessRules();
+            }
+
+            break;
+          default:
+            break;
+        }
       }
     });
   },
