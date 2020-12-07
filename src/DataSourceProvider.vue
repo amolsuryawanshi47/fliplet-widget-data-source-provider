@@ -428,6 +428,7 @@ export default {
         .toUpperCase()}</code> access must be added to the data source`;
 
       Fliplet.Modal.confirm({
+        title: 'Missing security rules',
         message: message,
         buttons: {
           confirm: {

@@ -891,6 +891,7 @@ __webpack_require__.r(__webpack_exports__);
 
       var message = "To use this feature, <code>".concat(this.missingAccessTypes.join(', ').toUpperCase(), "</code> access must be added to the data source");
       Fliplet.Modal.confirm({
+        title: 'Missing security rules',
         message: message,
         buttons: {
           confirm: {
@@ -973,7 +974,7 @@ __webpack_require__.r(__webpack_exports__);
           var targetSources = this.allDataSources.length ? this.allDataSources : this.dataSources;
 
           if (!targetSources.some(function (currDS) {
-            return currDS.id === _this8.selectedDataSource.id;
+            return currDS.id === _this9.selectedDataSource.id;
           })) {
             this.selectedDataSource = null;
           }
