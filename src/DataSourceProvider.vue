@@ -291,7 +291,7 @@ export default {
     loadDataSources(appId) {
       getDataSources(appId)
         .then(dataSources => {
-          if (this.widgetData.dataSourceId) {
+          if (this.widgetData.dataSourceId && this.selectedDataSource) {
             const selectedDataSourceFound = dataSources.some(dataSource => {
               return dataSource.id === this.selectedDataSource.id;
             });

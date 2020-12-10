@@ -754,7 +754,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this5 = this;
 
       Object(_services_dataSource__WEBPACK_IMPORTED_MODULE_1__["getDataSources"])(appId).then(function (dataSources) {
-        if (_this5.widgetData.dataSourceId) {
+        if (_this5.widgetData.dataSourceId && _this5.selectedDataSource) {
           var selectedDataSourceFound = dataSources.some(function (dataSource) {
             return dataSource.id === _this5.selectedDataSource.id;
           });
