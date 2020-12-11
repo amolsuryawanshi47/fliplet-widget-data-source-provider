@@ -624,13 +624,25 @@ __webpack_require__.r(__webpack_exports__);
       this.isLoading = true;
 
       if (this.selectedDataSource.accessRules && this.selectedDataSource.accessRules.length > 0) {
-        this.widgetData.accessRules.forEach(function (defaultRule, index, array) {
-          array[index].type = _this.missingAccessTypes;
+        this.widgetData.accessRules.forEach(function (defaultRule) {
+          defaultRule.type = _this.missingAccessTypes;
+          defaultRule.enabled = true;
 
-          _this.selectedDataSource.accessRules.push(defaultRule);
+          var accessRuleFound = _this.selectedDataSource.accessRules.some(function (rule) {
+            // Rule considered as duplicated in case if we have the same rule types and same allow option.
+            return defaultRule.allow === rule.allow && !_.difference(rule.type, defaultRule.type).length;
+          }); // Add new rule only if it is not found
+
+
+          if (!accessRuleFound) {
+            _this.selectedDataSource.accessRules.push(defaultRule);
+          }
         });
       } else {
-        this.selectedDataSource.accessRules = this.widgetData.accessRules;
+        this.selectedDataSource.accessRules = this.widgetData.accessRules.map(function (defaultRule) {
+          defaultRule.enabled = true;
+          return defaultRule;
+        });
       }
 
       Object(_services_dataSource__WEBPACK_IMPORTED_MODULE_1__["updateDataSourceSecurityRules"])(this.selectedDataSource.id, this.selectedDataSource.accessRules).then(function () {
@@ -1128,11 +1140,8 @@ var createDataSource = function createDataSource(data, context) {
   });
 };
 var updateDataSourceSecurityRules = function updateDataSourceSecurityRules(dataSourceId, securityRules) {
-  var accessRules = Object.assign(securityRules, {
-    enabled: true
-  });
   return Fliplet.DataSources.update(dataSourceId, {
-    accessRules: accessRules
+    accessRules: securityRules
   });
 };
 

@@ -155,13 +155,27 @@ export default {
       this.isLoading = true;
 
       if (this.selectedDataSource.accessRules && this.selectedDataSource.accessRules.length > 0) {
-        this.widgetData.accessRules.forEach((defaultRule, index, array) => {
-          array[index].type = this.missingAccessTypes;
+        this.widgetData.accessRules.forEach(defaultRule => {
+          defaultRule.type = this.missingAccessTypes;
+          defaultRule.enabled = true;
 
-          this.selectedDataSource.accessRules.push(defaultRule);
+
+          let accessRuleFound = this.selectedDataSource.accessRules.some(rule => {
+            // Rule considered as duplicated in case if we have the same rule types and same allow option.
+            return defaultRule.allow === rule.allow && !_.difference(rule.type, defaultRule.type).length;
+          });
+
+          // Add new rule only if it is not found
+          if (!accessRuleFound) {
+            this.selectedDataSource.accessRules.push(defaultRule);
+          }
         });
       } else {
-        this.selectedDataSource.accessRules = this.widgetData.accessRules;
+        this.selectedDataSource.accessRules = this.widgetData.accessRules.map(defaultRule => {
+          defaultRule.enabled = true;
+
+          return defaultRule;
+        });
       }
 
       updateDataSourceSecurityRules(this.selectedDataSource.id, this.selectedDataSource.accessRules)
