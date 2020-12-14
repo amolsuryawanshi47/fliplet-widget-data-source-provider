@@ -623,8 +623,10 @@ __webpack_require__.r(__webpack_exports__);
 
       this.isLoading = true;
 
+      var defaultRules = _.cloneDeep(this.widgetData.accessRules);
+
       if (this.selectedDataSource.accessRules && this.selectedDataSource.accessRules.length > 0) {
-        this.widgetData.accessRules.forEach(function (defaultRule) {
+        defaultRules.forEach(function (defaultRule) {
           defaultRule.type = _this.missingAccessTypes;
           defaultRule.enabled = true;
 

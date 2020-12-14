@@ -153,9 +153,10 @@ export default {
     },
     onAddDefaultSecurity() {
       this.isLoading = true;
+      const defaultRules = _.cloneDeep(this.widgetData.accessRules);
 
       if (this.selectedDataSource.accessRules && this.selectedDataSource.accessRules.length > 0) {
-        this.widgetData.accessRules.forEach(defaultRule => {
+        defaultRules.forEach(defaultRule => {
           defaultRule.type = this.missingAccessTypes;
           defaultRule.enabled = true;
 
