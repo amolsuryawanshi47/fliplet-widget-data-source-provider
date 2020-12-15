@@ -561,7 +561,11 @@ __webpack_require__.r(__webpack_exports__);
       changeDataSource: false,
       securityEnabled: false,
       showAll: false,
-      securityAdded: false
+      securityAdded: false,
+      defaultAccessRules: [{
+        type: ['select', 'insert', 'update', 'delete'],
+        allow: 'all'
+      }]
     };
   },
   computed: {
@@ -667,6 +671,10 @@ __webpack_require__.r(__webpack_exports__);
       if (!this.selectedDataSource) {
         this.securityEnabled = false;
         return;
+      }
+
+      if (!Array.isArray(this.selectedDataSource.accessRules)) {
+        this.selectedDataSource.accessRules = this.defaultAccessRules;
       }
 
       if (this.selectedDataSource.accessRules === null || !this.selectedDataSource.accessRules.length) {
