@@ -200,7 +200,14 @@ export default {
           // Add new rule only if it is not found
           // Or we if we have a missing rules to add
           if (!accessRuleFound && this.missingAccessTypes.length) {
-            this.selectedDataSource.accessRules.push(defaultRule);
+            // Split rules for each rule type
+            // To add them as separate rules
+            defaultRule.type.forEach((type) => {
+              this.selectedDataSource.accessRules.push({
+                ...defaultRule,
+                type
+              });
+            });
           }
         });
       } else {

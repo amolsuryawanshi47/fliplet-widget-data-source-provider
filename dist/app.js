@@ -107,7 +107,7 @@ new Vue({
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _DataSourceProvider_vue_vue_type_template_id_4de52e2f___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
 /* harmony import */ var _DataSourceProvider_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4);
-/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(13);
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(14);
 
 
 
@@ -460,7 +460,15 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6);
 /* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _services_dataSource__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(12);
+/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(12);
+/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _services_dataSource__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(13);
+
+
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 //
 //
@@ -665,7 +673,13 @@ __webpack_require__.r(__webpack_exports__);
 
 
           if (!accessRuleFound && _this2.missingAccessTypes.length) {
-            _this2.selectedDataSource.accessRules.push(defaultRule);
+            // Split rules for each rule type
+            // To add them as separate rules
+            defaultRule.type.forEach(function (type) {
+              _this2.selectedDataSource.accessRules.push(_objectSpread(_objectSpread({}, defaultRule), {}, {
+                type: type
+              }));
+            });
           }
         });
       } else {
@@ -675,7 +689,7 @@ __webpack_require__.r(__webpack_exports__);
         });
       }
 
-      Object(_services_dataSource__WEBPACK_IMPORTED_MODULE_1__["updateDataSourceSecurityRules"])(this.selectedDataSource.id, this.selectedDataSource.accessRules).then(function () {
+      Object(_services_dataSource__WEBPACK_IMPORTED_MODULE_2__["updateDataSourceSecurityRules"])(this.selectedDataSource.id, this.selectedDataSource.accessRules).then(function () {
         Fliplet.Modal.alert({
           message: 'Your changes have been applied to all affected apps.'
         }).then(function () {
@@ -749,7 +763,7 @@ __webpack_require__.r(__webpack_exports__);
     onDataSourceCreate: function onDataSourceCreate() {
       var _this4 = this;
 
-      Object(_services_dataSource__WEBPACK_IMPORTED_MODULE_1__["createDataSource"])(this.widgetData, this).then(function (dataSource) {
+      Object(_services_dataSource__WEBPACK_IMPORTED_MODULE_2__["createDataSource"])(this.widgetData, this).then(function (dataSource) {
         if (!dataSource) {
           return;
         }
@@ -775,7 +789,7 @@ __webpack_require__.r(__webpack_exports__);
     loadSelectedDataSource: function loadSelectedDataSource(dataSourceId) {
       var _this5 = this;
 
-      Object(_services_dataSource__WEBPACK_IMPORTED_MODULE_1__["getDataSource"])(dataSourceId).then(function (dataSource) {
+      Object(_services_dataSource__WEBPACK_IMPORTED_MODULE_2__["getDataSource"])(dataSourceId).then(function (dataSource) {
         _this5.selectedDataSource = dataSource;
         Fliplet.Widget.emit('dataSourceSelect', _this5.selectedDataSource);
 
@@ -799,7 +813,7 @@ __webpack_require__.r(__webpack_exports__);
     loadDataSources: function loadDataSources(appId) {
       var _this6 = this;
 
-      Object(_services_dataSource__WEBPACK_IMPORTED_MODULE_1__["getDataSources"])(appId).then(function (dataSources) {
+      Object(_services_dataSource__WEBPACK_IMPORTED_MODULE_2__["getDataSources"])(appId).then(function (dataSources) {
         if (_this6.widgetData.dataSourceId && _this6.selectedDataSource) {
           var selectedDataSourceFound = dataSources.some(function (dataSource) {
             return dataSource.id === _this6.selectedDataSource.id;
@@ -1120,6 +1134,27 @@ module.exports = _nonIterableSpread;
 
 /***/ }),
 /* 12 */
+/***/ (function(module, exports) {
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+module.exports = _defineProperty;
+
+/***/ }),
+/* 13 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1180,7 +1215,7 @@ var updateDataSourceSecurityRules = function updateDataSourceSecurityRules(dataS
 };
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
