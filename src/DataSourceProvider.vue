@@ -157,25 +157,29 @@ export default {
           return;
         }
 
+        let enabledAccessTypes = [];
+
         // If this rule has any missing access rule
-        this.missingAccessTypes.forEach((missingRule, index) => {
+        this.missingAccessTypes.forEach((missingRule) => {
           if (dataSourceRule.type.includes(missingRule)) {
             // If this rule for all or for current app
             if (
               (!dataSourceRule.appId || dataSourceRule.appId.includes(this.widgetData.appId))
             ) {
-              // Remove missing access types because we enabled rule where we have it
-              this.missingAccessTypes.splice(index, 1);
+              enabledAccessTypes.push(missingRule);
 
               // Enable access rule
               dataSourceRule.enabled = true;
             }
           }
         });
+
+        this.missingAccessTypes = _.difference(this.missingAccessTypes, enabledAccessTypes);
       });
     },
     onAddDefaultSecurity() {
       this.isLoading = true;
+
       const defaultRules = _.cloneDeep(this.widgetData.accessRules);
 
       if (this.selectedDataSource.accessRules && this.selectedDataSource.accessRules.length > 0) {
@@ -237,6 +241,7 @@ export default {
     hasAccessRules() {
       if (!this.selectedDataSource) {
         this.securityEnabled = false;
+
         return;
       }
 
@@ -251,6 +256,7 @@ export default {
             return accessType;
           });
         });
+
         return;
       }
 
@@ -462,6 +468,7 @@ export default {
       if (aValue < bValue) {
         return -1;
       }
+
       if (aValue > bValue) {
         return 1;
       }
@@ -552,6 +559,7 @@ export default {
         if (value) {
           if (!this.copyOfAllDataSources.length) {
             this.loadDataSources();
+
             return;
           }
 

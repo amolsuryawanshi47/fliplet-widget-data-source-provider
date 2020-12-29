@@ -633,21 +633,22 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
       this.selectedDataSource.accessRules.forEach(function (dataSourceRule) {
         if (dataSourceRule.enabled) {
           return;
-        } // If this rule has any missing access rule
+        }
 
+        var enabledAccessTypes = []; // If this rule has any missing access rule
 
-        _this.missingAccessTypes.forEach(function (missingRule, index) {
+        _this.missingAccessTypes.forEach(function (missingRule) {
           if (dataSourceRule.type.includes(missingRule)) {
             // If this rule for all or for current app
             if (!dataSourceRule.appId || dataSourceRule.appId.includes(_this.widgetData.appId)) {
-              // Remove missing access types because we enabled rule where we have it
-              _this.missingAccessTypes.splice(index, 1); // Enable access rule
-
+              enabledAccessTypes.push(missingRule); // Enable access rule
 
               dataSourceRule.enabled = true;
             }
           }
         });
+
+        _this.missingAccessTypes = _.difference(_this.missingAccessTypes, enabledAccessTypes);
       });
     },
     onAddDefaultSecurity: function onAddDefaultSecurity() {
