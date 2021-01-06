@@ -569,7 +569,8 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
       securityAdded: false,
       defaultAccessRules: [{
         type: ['select', 'insert', 'update', 'delete'],
-        allow: 'all'
+        allow: 'all',
+        enabled: true
       }]
     };
   },
