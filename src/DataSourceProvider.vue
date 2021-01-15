@@ -209,7 +209,7 @@ export default {
             defaultRule.type.forEach((type) => {
               this.selectedDataSource.accessRules.push({
                 ...defaultRule,
-                type
+                type: Array.isArray(type) ? type : [type]
               });
             });
           }

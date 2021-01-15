@@ -679,7 +679,7 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
             // To add them as separate rules
             defaultRule.type.forEach(function (type) {
               _this2.selectedDataSource.accessRules.push(_objectSpread(_objectSpread({}, defaultRule), {}, {
-                type: type
+                type: Array.isArray(type) ? type : [type]
               }));
             });
           }
