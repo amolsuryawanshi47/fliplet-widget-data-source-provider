@@ -628,8 +628,32 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
       this.loadDataSources(this.widgetData.appId);
     },
-    enableRequiredRules: function enableRequiredRules() {
+    addAppToExistingRule: function addAppToExistingRule() {
       var _this = this;
+
+      this.selectedDataSource.accessRules.forEach(function (dataSourceRule) {
+        if (!dataSourceRule.appId || !dataSourceRule.appId.length || dataSourceRule.appId.includes(_this.widgetData.appId)) {
+          return;
+        }
+
+        if (!_.difference(_this.missingAccessTypes, dataSourceRule.type).length) {
+          return dataSourceRule.appId.push(_this.widgetData.appId);
+        }
+
+        var enabledAccessTypes = [];
+
+        _this.missingAccessTypes.forEach(function (missingRule) {
+          if (dataSourceRule.type.includes(missingRule) && dataSourceRule.type.length === 1) {
+            enabledAccessTypes.push(missingRule);
+            dataSourceRule.appId.push(_this.widgetData.appId);
+          }
+        });
+
+        _this.missingAccessTypes = _.difference(_this.missingAccessTypes, enabledAccessTypes);
+      });
+    },
+    enableRequiredRules: function enableRequiredRules() {
+      var _this2 = this;
 
       this.selectedDataSource.accessRules.forEach(function (dataSourceRule) {
         if (dataSourceRule.enabled) {
@@ -638,10 +662,10 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
         var enabledAccessTypes = []; // If this rule has any missing access rule
 
-        _this.missingAccessTypes.forEach(function (missingRule) {
+        _this2.missingAccessTypes.forEach(function (missingRule) {
           if (dataSourceRule.type.includes(missingRule)) {
             // If this rule for all or for current app
-            if (!dataSourceRule.appId || dataSourceRule.appId.includes(_this.widgetData.appId)) {
+            if (!dataSourceRule.appId || dataSourceRule.appId.includes(_this2.widgetData.appId)) {
               enabledAccessTypes.push(missingRule); // Enable access rule
 
               dataSourceRule.enabled = true;
@@ -649,36 +673,37 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
           }
         });
 
-        _this.missingAccessTypes = _.difference(_this.missingAccessTypes, enabledAccessTypes);
+        _this2.missingAccessTypes = _.difference(_this2.missingAccessTypes, enabledAccessTypes);
       });
     },
     onAddDefaultSecurity: function onAddDefaultSecurity() {
-      var _this2 = this;
+      var _this3 = this;
 
       this.isLoading = true;
 
       var defaultRules = _.cloneDeep(this.widgetData.accessRules);
 
       if (this.selectedDataSource.accessRules && this.selectedDataSource.accessRules.length > 0) {
+        this.addAppToExistingRule();
         this.enableRequiredRules();
         defaultRules.forEach(function (defaultRule) {
-          defaultRule.type = _this2.missingAccessTypes;
+          defaultRule.type = _this3.missingAccessTypes;
           defaultRule.enabled = true;
 
-          var accessRuleFound = _this2.selectedDataSource.accessRules.some(function (rule) {
+          var accessRuleFound = _this3.selectedDataSource.accessRules.some(function (rule) {
             // Rule considered as duplicated in case if we have the same rule types and same allow option.
             // And it's enabled
             // And it's related to all apps or to the current app
-            return defaultRule.allow === rule.allow && !_.difference(rule.type, defaultRule.type).length && rule.enabled && (!rule.appId || rule.appId.includes(_this2.widgetData.appId));
+            return defaultRule.allow === rule.allow && !_.difference(rule.type, defaultRule.type).length && rule.enabled && (!rule.appId || rule.appId.includes(_this3.widgetData.appId));
           }); // Add new rule only if it is not found
           // Or we if we have a missing rules to add
 
 
-          if (!accessRuleFound && _this2.missingAccessTypes.length) {
+          if (!accessRuleFound && _this3.missingAccessTypes.length) {
             // Split rules for each rule type
             // To add them as separate rules
             defaultRule.type.forEach(function (type) {
-              _this2.selectedDataSource.accessRules.push(_objectSpread(_objectSpread({}, defaultRule), {}, {
+              _this3.selectedDataSource.accessRules.push(_objectSpread(_objectSpread({}, defaultRule), {}, {
                 type: Array.isArray(type) ? type : [type]
               }));
             });
@@ -695,18 +720,18 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
         Fliplet.Modal.alert({
           message: 'Your changes have been applied to all affected apps.'
         }).then(function () {
-          _this2.hasAccessRules();
+          _this3.hasAccessRules();
 
-          _this2.securityAdded = true;
+          _this3.securityAdded = true;
         });
       })["catch"](function (err) {
-        _this2.showError(Fliplet.parseError(err));
+        _this3.showError(Fliplet.parseError(err));
       })["finally"](function () {
-        _this2.isLoading = false;
+        _this3.isLoading = false;
       });
     },
     hasAccessRules: function hasAccessRules() {
-      var _this3 = this;
+      var _this4 = this;
 
       if (!this.selectedDataSource) {
         this.securityEnabled = false;
@@ -730,9 +755,9 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
       var includedAccessTypes = [];
       this.missingAccessTypes = [];
       this.selectedDataSource.accessRules.forEach(function (dataSourceRules) {
-        _this3.widgetData.accessRules.forEach(function (componentRules) {
+        _this4.widgetData.accessRules.forEach(function (componentRules) {
           componentRules.type.forEach(function (componentType) {
-            if (dataSourceRules.type.includes(componentType) && dataSourceRules.enabled && (!dataSourceRules.appId || dataSourceRules.appId.includes(_this3.widgetData.appId))) {
+            if (dataSourceRules.type.includes(componentType) && dataSourceRules.enabled && (!dataSourceRules.appId || dataSourceRules.appId.includes(_this4.widgetData.appId))) {
               includedAccessTypes.push(componentType);
             }
           });
@@ -742,7 +767,7 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
       this.widgetData.accessRules.forEach(function (defaultRule) {
         defaultRule.type.forEach(function (defaultType) {
           if (!includedAccessTypes.includes(defaultType)) {
-            _this3.missingAccessTypes.push(defaultType);
+            _this4.missingAccessTypes.push(defaultType);
           }
         });
       });
@@ -763,82 +788,82 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
       }
     },
     onDataSourceCreate: function onDataSourceCreate() {
-      var _this4 = this;
+      var _this5 = this;
 
       Object(_services_dataSource__WEBPACK_IMPORTED_MODULE_2__["createDataSource"])(this.widgetData, this).then(function (dataSource) {
         if (!dataSource) {
           return;
         }
 
-        _this4.selectedDataSource = dataSource;
+        _this5.selectedDataSource = dataSource;
 
-        if (_this4.allDataSources.length) {
-          _this4.allDataSources.push(dataSource);
+        if (_this5.allDataSources.length) {
+          _this5.allDataSources.push(dataSource);
         }
 
-        _this4.appDataSources.push(dataSource);
+        _this5.appDataSources.push(dataSource);
 
-        _this4.hasAccessRules();
+        _this5.hasAccessRules();
 
-        _this4.dataSources = _this4.formatDataSources();
+        _this5.dataSources = _this5.formatDataSources();
         Fliplet.Widget.emit('dataSourceSelect', dataSource);
       })["catch"](function (err) {
-        _this4.showError(Fliplet.parseError(err));
+        _this5.showError(Fliplet.parseError(err));
       })["finally"](function () {
-        _this4.isLoading = false;
+        _this5.isLoading = false;
       });
     },
     loadSelectedDataSource: function loadSelectedDataSource(dataSourceId) {
-      var _this5 = this;
+      var _this6 = this;
 
       Object(_services_dataSource__WEBPACK_IMPORTED_MODULE_2__["getDataSource"])(dataSourceId).then(function (dataSource) {
-        _this5.selectedDataSource = dataSource;
-        Fliplet.Widget.emit('dataSourceSelect', _this5.selectedDataSource);
+        _this6.selectedDataSource = dataSource;
+        Fliplet.Widget.emit('dataSourceSelect', _this6.selectedDataSource);
 
-        _this5.hasAccessRules();
+        _this6.hasAccessRules();
       })["catch"](function (err) {
         if (err.status === 404) {
-          _this5.selectedDataSource = null;
-          _this5.widgetData.dataSourceId = null;
+          _this6.selectedDataSource = null;
+          _this6.widgetData.dataSourceId = null;
 
-          _this5.loadDataSources(_this5.widgetData.appId);
+          _this6.loadDataSources(_this6.widgetData.appId);
 
           return;
         }
 
-        _this5.showError(Fliplet.parseError(err));
+        _this6.showError(Fliplet.parseError(err));
       })["finally"](function () {
-        _this5.isLoading = false;
+        _this6.isLoading = false;
         Fliplet.Widget.autosize();
       });
     },
     loadDataSources: function loadDataSources(appId) {
-      var _this6 = this;
+      var _this7 = this;
 
       Object(_services_dataSource__WEBPACK_IMPORTED_MODULE_2__["getDataSources"])(appId).then(function (dataSources) {
-        if (_this6.widgetData.dataSourceId && _this6.selectedDataSource) {
+        if (_this7.widgetData.dataSourceId && _this7.selectedDataSource) {
           var selectedDataSourceFound = dataSources.some(function (dataSource) {
-            return dataSource.id === _this6.selectedDataSource.id;
+            return dataSource.id === _this7.selectedDataSource.id;
           });
 
           if (!selectedDataSourceFound) {
-            dataSources.push(_this6.selectedDataSource);
+            dataSources.push(_this7.selectedDataSource);
           }
         }
 
         if (appId) {
-          _this6.appDataSources = dataSources;
+          _this7.appDataSources = dataSources;
         } else {
-          _this6.allDataSources = dataSources;
+          _this7.allDataSources = dataSources;
         }
 
-        _this6.dataSources = _this6.formatDataSources();
+        _this7.dataSources = _this7.formatDataSources();
 
-        _this6.hasAccessRules();
+        _this7.hasAccessRules();
       })["catch"](function (err) {
-        _this6.showError(Fliplet.parseError(err));
+        _this7.showError(Fliplet.parseError(err));
       })["finally"](function () {
-        _this6.isLoading = false;
+        _this7.isLoading = false;
         Fliplet.Widget.autosize();
       });
     },
@@ -863,10 +888,10 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
       });
     },
     getOtherAppsDataSources: function getOtherAppsDataSources(dataSources) {
-      var _this7 = this;
+      var _this8 = this;
 
       return dataSources.filter(function (dataSource) {
-        return _this7.appDataSources.findIndex(function (currDS) {
+        return _this8.appDataSources.findIndex(function (currDS) {
           return currDS.id === dataSource.id;
         }) === -1;
       });
@@ -949,7 +974,7 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
       });
     },
     confirmAccessRules: function confirmAccessRules() {
-      var _this8 = this;
+      var _this9 = this;
 
       var message = "To use this feature, <code>".concat(this.missingAccessTypes.join(', ').toUpperCase(), "</code> access must be added to the data source");
       Fliplet.Modal.confirm({
@@ -965,19 +990,19 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
         }
       }).then(function (result) {
         if (result) {
-          _this8.onAddDefaultSecurity();
+          _this9.onAddDefaultSecurity();
         }
       });
     }
   },
   mounted: function mounted() {
-    var _this9 = this;
+    var _this10 = this;
 
     this.initProvider(); // Transfer selected DataSource id to the parent
 
     Fliplet.Widget.onSaveRequest(function () {
       Fliplet.Widget.save({
-        id: _this9.selectedDataSource ? _this9.selectedDataSource.id : null
+        id: _this10.selectedDataSource ? _this10.selectedDataSource.id : null
       });
     });
     Fliplet.Studio.onMessage(function (event) {
@@ -985,18 +1010,18 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
         switch (event.data.event) {
           case 'overlay-close':
             if (event.data.classes === 'data-source-overlay') {
-              _this9.loadSelectedDataSource(_this9.selectedDataSource.id);
+              _this10.loadSelectedDataSource(_this10.selectedDataSource.id);
             }
 
             break;
 
           case 'update-security-rules':
-            _this9.widgetData.accessRules = event.data.accessRules;
+            _this10.widgetData.accessRules = event.data.accessRules;
 
-            _this9.hasAccessRules();
+            _this10.hasAccessRules();
 
-            if (!_this9.securityEnabled && _this9.selectedDataSource) {
-              _this9.confirmAccessRules();
+            if (!_this10.securityEnabled && _this10.selectedDataSource) {
+              _this10.confirmAccessRules();
             }
 
             break;
@@ -1013,7 +1038,7 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
   watch: {
     showAll: {
       handler: function handler(value) {
-        var _this10 = this;
+        var _this11 = this;
 
         this.isLoading = true;
         this.dataSources = [];
@@ -1036,7 +1061,7 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
           var targetSources = this.allDataSources.length ? this.allDataSources : this.dataSources;
 
           if (!targetSources.some(function (currDS) {
-            return currDS.id === _this10.selectedDataSource.id;
+            return currDS.id === _this11.selectedDataSource.id;
           })) {
             this.selectedDataSource = null;
           }
@@ -1044,7 +1069,7 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 
         this.$nextTick(function () {
-          _this10.isLoading = false;
+          _this11.isLoading = false;
         });
       }
     }
