@@ -640,16 +640,19 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
           return dataSourceRule.appId.push(_this.widgetData.appId);
         }
 
-        var enabledAccessTypes = [];
+        var existingAccessTypes = [];
 
         _this.missingAccessTypes.forEach(function (missingRule) {
-          if (dataSourceRule.type.includes(missingRule) && dataSourceRule.type.length === 1) {
-            enabledAccessTypes.push(missingRule);
-            dataSourceRule.appId.push(_this.widgetData.appId);
+          if (dataSourceRule.type.includes(missingRule)) {
+            existingAccessTypes.push(missingRule);
           }
         });
 
-        _this.missingAccessTypes = _.difference(_this.missingAccessTypes, enabledAccessTypes);
+        if (existingAccessTypes.length === dataSourceRule.type.length) {
+          dataSourceRule.appId.push(_this.widgetData.appId);
+        }
+
+        _this.missingAccessTypes = _.difference(_this.missingAccessTypes, existingAccessTypes);
       });
     },
     enableRequiredRules: function enableRequiredRules() {

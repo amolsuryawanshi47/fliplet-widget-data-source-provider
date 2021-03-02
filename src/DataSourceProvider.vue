@@ -161,16 +161,19 @@ export default {
           return dataSourceRule.appId.push(this.widgetData.appId);
         }
 
-        let enabledAccessTypes = [];
+        let existingAccessTypes = [];
 
         this.missingAccessTypes.forEach(missingRule => {
-          if (dataSourceRule.type.includes(missingRule) && dataSourceRule.type.length === 1) {
-            enabledAccessTypes.push(missingRule);
-            dataSourceRule.appId.push(this.widgetData.appId);
+          if (dataSourceRule.type.includes(missingRule)) {
+            existingAccessTypes.push(missingRule);
           }
         });
 
-        this.missingAccessTypes = _.difference(this.missingAccessTypes, enabledAccessTypes);
+        if (existingAccessTypes.length === dataSourceRule.type.length) {
+          dataSourceRule.appId.push(this.widgetData.appId);
+        }
+
+        this.missingAccessTypes = _.difference(this.missingAccessTypes, existingAccessTypes);
       });
     },
     enableRequiredRules() {
