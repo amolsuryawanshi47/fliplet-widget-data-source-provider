@@ -41,7 +41,7 @@
           <a @click.prevent="onDataSourceCreate" class="create-data-source" href="#">Create new data source</a>
 
           <div class="checkbox checkbox-icon">
-            <input :checked="showAll" v-model="showAll" type="checkbox" name="showAll" id="showAll" />
+            <input v-model="showAll" type="checkbox" name="showAll" id="showAll" />
             <label for="showAll">
               <span class="check">
                 <i class="fa fa-check"></i>

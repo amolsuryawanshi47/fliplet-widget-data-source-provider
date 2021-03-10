@@ -294,7 +294,6 @@ var render = function() {
                     ],
                     attrs: { type: "checkbox", name: "showAll", id: "showAll" },
                     domProps: {
-                      checked: _vm.showAll,
                       checked: Array.isArray(_vm.showAll)
                         ? _vm._i(_vm.showAll, null) > -1
                         : _vm.showAll
