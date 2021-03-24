@@ -14537,7 +14537,15 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
           return;
         }
 
-        _this5.selectedDataSource = dataSource;
+        if (Modernizr.ie11) {
+          // Specific fix for Vue 2.0.0(and above) render bug in IE11 
+          // https://github.com/vuejs/vue/issues/6209
+          setTimeout(function () {
+            _this5.selectedDataSource = dataSource;
+          }, 0);
+        } else {
+          _this5.selectedDataSource = dataSource;
+        }
 
         if (_this5.allDataSources.length) {
           _this5.allDataSources.push(dataSource);

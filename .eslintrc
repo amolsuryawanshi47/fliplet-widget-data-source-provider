@@ -6,7 +6,8 @@
     "plugin:vue/essential"
   ],
   "globals": {
-    "Vue": true
+    "Vue": true,
+    "Modernizr": true
   },
   "rules": {
     "no-new": 0
