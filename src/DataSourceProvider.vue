@@ -519,7 +519,8 @@ export default {
           classes: 'data-source-overlay',
           data: {
             context: 'overlay',
-            dataSourceId: this.selectedDataSource.id
+            dataSourceId: this.selectedDataSource.id,
+            appId: Fliplet.Env.get('appId')
           },
           helpLink: 'https://help.fliplet.com/data-sources/'
         }
