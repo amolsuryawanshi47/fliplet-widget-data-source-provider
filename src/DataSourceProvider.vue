@@ -339,11 +339,11 @@ export default {
           }
 
           if (Modernizr.ie11) {
-            // Specific fix for Vue 2.0.0(and above) render bug in IE11
+            // Specific fix for Vue 2.0.0(and above) render bug in IE11 
             // https://github.com/vuejs/vue/issues/6209
             setTimeout(() => {
               this.selectedDataSource = dataSource;
-            }, 0);
+            }, 0)
           } else {
             this.selectedDataSource = dataSource;
           }
@@ -444,7 +444,9 @@ export default {
       return allDataSources.filter(group => !!group.options.length);
     },
     getOtherAppsDataSources(dataSources) {
-      return _.difference(dataSources, this.appDataSources, 'id');
+      return dataSources.filter(dataSource => {
+        return this.appDataSources.findIndex(currDS => currDS.id === dataSource.id) === -1;
+      });
     },
     formatDataSourceOption(data) {
       const { id, name, text } = data;
