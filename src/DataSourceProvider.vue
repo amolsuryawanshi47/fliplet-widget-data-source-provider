@@ -116,7 +116,7 @@ export default {
         value = null;
       } else if (this.allDataSources.length) {
         this.dataSources.some(group => {
-          let selectedOption = group.options.find(option => option.id === id);
+          let selectedOption = _.find(group.options, ['id', id]);
 
           if (selectedOption) {
             value = selectedOption;
@@ -127,7 +127,7 @@ export default {
           return false;
         });
       } else {
-        value = this.dataSources.find(option => option.id === id);
+        value = _.find(this.dataSources, ['id', id]);
       }
 
       this.selectedDataSource = value;
@@ -153,7 +153,7 @@ export default {
     },
     addAppToExistingRule() {
       this.selectedDataSource.accessRules.forEach(dataSourceRule => {
-        if (!dataSourceRule.appId || !dataSourceRule.appId.length || dataSourceRule.appId.includes(this.widgetData.appId)) {
+        if (!dataSourceRule.appId || !dataSourceRule.appId.length || _.includes(dataSourceRule.appId, this.widgetData.appId)) {
           return;
         }
 
@@ -164,7 +164,7 @@ export default {
         let existingAccessTypes = [];
 
         this.missingAccessTypes.forEach(missingRule => {
-          if (dataSourceRule.type.includes(missingRule)) {
+          if (_.includes(dataSourceRule.type, missingRule)) {
             existingAccessTypes.push(missingRule);
           }
         });
@@ -186,10 +186,10 @@ export default {
 
         // If this rule has any missing access rule
         this.missingAccessTypes.forEach((missingRule) => {
-          if (dataSourceRule.type.includes(missingRule)) {
+          if (_.includes(dataSourceRule.type, missingRule)) {
             // If this rule for all or for current app
             if (
-              (!dataSourceRule.appId || dataSourceRule.appId.includes(this.widgetData.appId))
+              (!dataSourceRule.appId || _.includes(dataSourceRule.appId, this.widgetData.appId))
             ) {
               enabledAccessTypes.push(missingRule);
 
@@ -223,7 +223,7 @@ export default {
               defaultRule.allow === rule.allow
                 && !_.difference(rule.type, defaultRule.type).length
                 && rule.enabled
-                && (!rule.appId || rule.appId.includes(this.widgetData.appId))
+                && (!rule.appId || _.includes(rule.appId, this.widgetData.appId))
             );
           });
 
@@ -294,9 +294,9 @@ export default {
         this.widgetData.accessRules.forEach(componentRules => {
           componentRules.type.forEach(componentType => {
             if (
-              dataSourceRules.type.includes(componentType)
+              _.includes(dataSourceRules.type, componentType)
               && dataSourceRules.enabled
-              && (!dataSourceRules.appId || dataSourceRules.appId.includes(this.widgetData.appId))
+              && (!dataSourceRules.appId || _.includes(dataSourceRules.appId, this.widgetData.appId))
             ) {
               includedAccessTypes.push(componentType);
             }
@@ -308,7 +308,7 @@ export default {
 
       this.widgetData.accessRules.forEach(defaultRule => {
         defaultRule.type.forEach(defaultType => {
-          if (!includedAccessTypes.includes(defaultType)) {
+          if (!_.includes(includedAccessTypes, defaultType)) {
             this.missingAccessTypes.push(defaultType);
           }
         });
@@ -339,11 +339,11 @@ export default {
           }
 
           if (Modernizr.ie11) {
-            // Specific fix for Vue 2.0.0(and above) render bug in IE11 
+            // Specific fix for Vue 2.0.0(and above) render bug in IE11
             // https://github.com/vuejs/vue/issues/6209
             setTimeout(() => {
               this.selectedDataSource = dataSource;
-            }, 0)
+            }, 0);
           } else {
             this.selectedDataSource = dataSource;
           }
@@ -444,9 +444,7 @@ export default {
       return allDataSources.filter(group => !!group.options.length);
     },
     getOtherAppsDataSources(dataSources) {
-      return dataSources.filter(dataSource => {
-        return this.appDataSources.findIndex(currDS => currDS.id === dataSource.id) === -1;
-      });
+      return _.difference(dataSources, this.appDataSources, 'id');
     },
     formatDataSourceOption(data) {
       const { id, name, text } = data;
