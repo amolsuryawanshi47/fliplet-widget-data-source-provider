@@ -291,7 +291,7 @@ export default {
       this.missingAccessTypes = [];
 
       this.selectedDataSource.accessRules.forEach(dataSourceRules => {
-        this.widgetData.accessRules.forEach(componentRules => {
+        _.forEach(this.widgetData.accessRules, componentRules => {
           componentRules.type.forEach(componentType => {
             if (
               _.includes(dataSourceRules.type, componentType)
@@ -306,7 +306,7 @@ export default {
 
       includedAccessTypes = _.uniq(includedAccessTypes);
 
-      this.widgetData.accessRules.forEach(defaultRule => {
+      _.forEach(this.widgetData.accessRules, defaultRule => {
         defaultRule.type.forEach(defaultType => {
           if (!_.includes(includedAccessTypes, defaultType)) {
             this.missingAccessTypes.push(defaultType);

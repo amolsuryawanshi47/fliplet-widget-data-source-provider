@@ -753,7 +753,7 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
       var includedAccessTypes = [];
       this.missingAccessTypes = [];
       this.selectedDataSource.accessRules.forEach(function (dataSourceRules) {
-        _this4.widgetData.accessRules.forEach(function (componentRules) {
+        _.forEach(_this4.widgetData.accessRules, function (componentRules) {
           componentRules.type.forEach(function (componentType) {
             if (_.includes(dataSourceRules.type, componentType) && dataSourceRules.enabled && (!dataSourceRules.appId || _.includes(dataSourceRules.appId, _this4.widgetData.appId))) {
               includedAccessTypes.push(componentType);
@@ -762,13 +762,15 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
         });
       });
       includedAccessTypes = _.uniq(includedAccessTypes);
-      this.widgetData.accessRules.forEach(function (defaultRule) {
+
+      _.forEach(this.widgetData.accessRules, function (defaultRule) {
         defaultRule.type.forEach(function (defaultType) {
           if (!_.includes(includedAccessTypes, defaultType)) {
             _this4.missingAccessTypes.push(defaultType);
           }
         });
       });
+
       this.missingAccessTypes = _.uniq(this.missingAccessTypes);
 
       if (this.missingAccessTypes.length) {
