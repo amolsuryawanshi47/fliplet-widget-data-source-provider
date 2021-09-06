@@ -1,80 +1,82 @@
 <template>
-  <section class="container">
-    <div class="data-source-title">
-      <strong>{{ widgetData.dataSourceTitle || 'Select a data source' }}</strong>
-    </div>
+  <section class="container-fluid">
+    <div class="row">
+      <div class="data-source-title">
+        <strong>{{ widgetData.dataSourceTitle || 'Select a data source' }}</strong>
+      </div>
 
-    <div v-if="isLoading" class="spinner-container animated">
-      <div class="spinner-overlay">Loading...</div>
-    </div>
+      <div v-if="isLoading" class="spinner-container animated">
+        <div class="spinner-overlay">Loading...</div>
+      </div>
 
-    <div class="main-data-source-provider" :class="{ 'select-overlay': isLoading }">
-      <section class="data-source-selector">
-        <div v-if="dataSources.length || (!dataSources.length && !selectedDataSource)">
-          <label for="data-source-select" class="select-proxy-display">
-            <select
-              ref="select"
-              class="hidden-select form-control"
-              @change="onSelectChange"
-              :value="selectedDataSource ? selectedDataSource.id : ''"
-            >
-              <option value>-- Select data source</option>
-              <option v-if="!dataSources.length" value="none" disabled>(No data source found)</option>
-              <template v-else-if="dataSources.length">
-                <template v-if="!!allDataSources.length">
-                  <optgroup v-for="group in dataSources" :key="group.name" :label="group.name">
-                    <option v-for="option in group.options" :key="option.id" :value="option.id">{{
+      <div class="main-data-source-provider" :class="{ 'select-overlay': isLoading }">
+        <section class="data-source-selector">
+          <div v-if="dataSources.length || (!dataSources.length && !selectedDataSource)">
+            <label for="data-source-select" class="select-proxy-display">
+              <select
+                ref="select"
+                class="hidden-select form-control"
+                @change="onSelectChange"
+                :value="selectedDataSource ? selectedDataSource.id : ''"
+              >
+                <option value>-- Select data source</option>
+                <option v-if="!dataSources.length" value="none" disabled>(No data source found)</option>
+                <template v-else-if="dataSources.length">
+                  <template v-if="!!allDataSources.length">
+                    <optgroup v-for="group in dataSources" :key="group.name" :label="group.name">
+                      <option v-for="option in group.options" :key="option.id" :value="option.id">{{
+                        formatDataSourceOption(option)
+                      }}</option>
+                    </optgroup>
+                  </template>
+                  <template v-else>
+                    <option v-for="option in dataSources" :key="option.id" :value="option.id">{{
                       formatDataSourceOption(option)
                     }}</option>
-                  </optgroup>
+                  </template>
                 </template>
-                <template v-else>
-                  <option v-for="option in dataSources" :key="option.id" :value="option.id">{{
-                    formatDataSourceOption(option)
-                  }}</option>
-                </template>
-              </template>
-            </select>
-            <span class="icon fa fa-chevron-down"></span>
-          </label>
-
-          <a @click.prevent="onDataSourceCreate" class="create-data-source" href="#">Create new data source</a>
-
-          <div class="checkbox checkbox-icon">
-            <input v-model="showAll" type="checkbox" name="showAll" id="showAll" />
-            <label for="showAll">
-              <span class="check">
-                <i class="fa fa-check"></i>
-              </span>
-              Show all data sources
+              </select>
+              <span class="icon fa fa-chevron-down"></span>
             </label>
-          </div>
-        </div>
 
-        <div v-else-if="selectedDataSource && !changeDataSource">
-          <div class="selected-data-source">
-            <div class="selected-data-source info">
-              <code>{{ selectedDataSource.id }}</code> <span>{{ selectedDataSource.name }}</span>
+            <a @click.prevent="onDataSourceCreate" class="create-data-source" href="#">Create new data source</a>
+
+            <div class="checkbox checkbox-icon">
+              <input v-model="showAll" type="checkbox" name="showAll" id="showAll" />
+              <label for="showAll">
+                <span class="check">
+                  <i class="fa fa-check"></i>
+                </span>
+                Show all data sources
+              </label>
             </div>
-            <a @click.prevent="onDataSourceChange" class="change-data-source selected-data-source action">Change</a>
           </div>
-        </div>
 
-        <div v-show="selectedDataSource" @click="viewDataSource" class="btn btn-default btn-view-data-source">
-          View data source
-        </div>
+          <div v-else-if="selectedDataSource && !changeDataSource">
+            <div class="selected-data-source">
+              <div class="selected-data-source info">
+                <code>{{ selectedDataSource.id }}</code> <span>{{ selectedDataSource.name }}</span>
+              </div>
+              <a @click.prevent="onDataSourceChange" class="change-data-source selected-data-source action">Change</a>
+            </div>
+          </div>
 
-        <section v-show="showAccessRulesAlert" class="security-notify">
-          <div v-if="!securityEnabled" class="alert alert-warning">
-            <p><b>This data source is missing security rules.</b></p>
-            <p>Configure security rules so the app can access the data</p>
-            <div @click="onAddDefaultSecurity" class="btn btn-primary btn-security">Configure security rules</div>
+          <div v-show="selectedDataSource" @click="viewDataSource" class="btn btn-default btn-view-data-source">
+            View data source
           </div>
-          <div v-else-if="securityAdded" class="alert alert-success">
-            Security rules added. To manage security rules click <b>View data source</b> above.
-          </div>
+
+          <section v-show="showAccessRulesAlert" class="security-notify">
+            <div v-if="!securityEnabled" class="alert alert-warning">
+              <p><b>This data source is missing security rules.</b></p>
+              <p>Configure security rules so the app can access the data</p>
+              <div @click="onAddDefaultSecurity" class="btn btn-primary btn-security">Configure security rules</div>
+            </div>
+            <div v-else-if="securityAdded" class="alert alert-success">
+              Security rules added. To manage security rules click <b>View data source</b> above.
+            </div>
+          </section>
         </section>
-      </section>
+      </div>
     </div>
   </section>
 </template>
