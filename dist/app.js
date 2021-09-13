@@ -1029,6 +1029,10 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
             break;
 
+          case 'show-widget':
+            Fliplet.Widget.autosize();
+            break;
+
           default:
             break;
         }
