@@ -583,8 +583,6 @@ export default {
 
             break;
           case 'click-save':
-            debugger;
-
             if (!this.$v.selectedValue.$model) {
               this.hasError = true;
             } else {
