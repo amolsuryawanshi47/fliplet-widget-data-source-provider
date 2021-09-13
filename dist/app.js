@@ -189,12 +189,21 @@ var render = function() {
                     "label",
                     {
                       staticClass: "select-proxy-display",
+                      class: { "has-error": _vm.hasError },
                       attrs: { for: "data-source-select" }
                     },
                     [
                       _c(
                         "select",
                         {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.$v.selectedValue.$model,
+                              expression: "$v.selectedValue.$model"
+                            }
+                          ],
                           ref: "select",
                           staticClass: "hidden-select form-control",
                           domProps: {
@@ -202,7 +211,28 @@ var render = function() {
                               ? _vm.selectedDataSource.id
                               : ""
                           },
-                          on: { change: _vm.onSelectChange }
+                          on: {
+                            change: [
+                              function($event) {
+                                var $$selectedVal = Array.prototype.filter
+                                  .call($event.target.options, function(o) {
+                                    return o.selected
+                                  })
+                                  .map(function(o) {
+                                    var val = "_value" in o ? o._value : o.value
+                                    return val
+                                  })
+                                _vm.$set(
+                                  _vm.$v.selectedValue,
+                                  "$model",
+                                  $event.target.multiple
+                                    ? $$selectedVal
+                                    : $$selectedVal[0]
+                                )
+                              },
+                              _vm.onSelectChange
+                            ]
+                          }
                         },
                         [
                           _c("option", { attrs: { value: "" } }, [
@@ -562,14 +592,19 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 //
 //
 //
+//
 
+Vue.use(window.vuelidate["default"]);
+var required = window.validators.required;
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
       appDataSources: [],
       allDataSources: [],
       copyOfAllDataSources: [],
+      hasError: false,
       missingAccessTypes: [],
+      selectedValue: '',
       isLoading: true,
       widgetData: {},
       selectedDataSource: null,
@@ -588,6 +623,11 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
   computed: {
     showAccessRulesAlert: function showAccessRulesAlert() {
       return this.selectedDataSource && this.widgetData.accessRules && this.widgetData.accessRules.length > 0;
+    }
+  },
+  validations: {
+    selectedValue: {
+      required: required
     }
   },
   methods: {
@@ -1008,6 +1048,11 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
           _this8.onAddDefaultSecurity();
         }
       });
+    },
+    status: function status(validation) {
+      return {
+        error: validation.$error
+      };
     }
   },
   mounted: function mounted() {
@@ -1026,6 +1071,17 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
           case 'overlay-close':
             if (event.data.classes === 'data-source-overlay') {
               _this9.loadSelectedDataSource(_this9.selectedDataSource.id);
+            }
+
+            break;
+
+          case 'click-save':
+            debugger;
+
+            if (!_this9.$v.selectedValue.$model) {
+              _this9.hasError = true;
+            } else {
+              _this9.hasError = false;
             }
 
             break;
