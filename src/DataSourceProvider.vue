@@ -582,7 +582,7 @@ export default {
             }
 
             break;
-          case 'click-save':
+          case 'validation':
             if (!this.$v.selectedValue.$model) {
               this.hasError = true;
             } else {
