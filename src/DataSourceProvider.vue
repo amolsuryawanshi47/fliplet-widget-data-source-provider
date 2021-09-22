@@ -576,6 +576,10 @@ export default {
             }
 
             break;
+          case 'widget-autosize':
+            Fliplet.Widget.autosize();
+
+            break;
           default:
             break;
         }
