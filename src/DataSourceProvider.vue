@@ -556,6 +556,8 @@ export default {
     });
 
     Fliplet.Studio.onMessage(event => {
+      console.log(event);
+
       if (event.data) {
         switch (event.data.event) {
           case 'overlay-close':
@@ -575,6 +577,8 @@ export default {
 
             break;
           case 'widget-autosize':
+            console.log('in');
+
             Fliplet.Widget.autosize();
 
             break;

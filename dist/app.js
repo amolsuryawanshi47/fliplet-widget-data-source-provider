@@ -1009,6 +1009,8 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
       });
     });
     Fliplet.Studio.onMessage(function (event) {
+      console.log(event);
+
       if (event.data) {
         switch (event.data.event) {
           case 'overlay-close':
@@ -1030,6 +1032,7 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
             break;
 
           case 'widget-autosize':
+            console.log('in');
             Fliplet.Widget.autosize();
             break;
 
