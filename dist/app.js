@@ -196,14 +196,6 @@ var render = function() {
                       _c(
                         "select",
                         {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.$v.selectedValue.$model,
-                              expression: "$v.selectedValue.$model"
-                            }
-                          ],
                           ref: "select",
                           staticClass: "hidden-select form-control",
                           domProps: {
@@ -211,28 +203,7 @@ var render = function() {
                               ? _vm.selectedDataSource.id
                               : ""
                           },
-                          on: {
-                            change: [
-                              function($event) {
-                                var $$selectedVal = Array.prototype.filter
-                                  .call($event.target.options, function(o) {
-                                    return o.selected
-                                  })
-                                  .map(function(o) {
-                                    var val = "_value" in o ? o._value : o.value
-                                    return val
-                                  })
-                                _vm.$set(
-                                  _vm.$v.selectedValue,
-                                  "$model",
-                                  $event.target.multiple
-                                    ? $$selectedVal
-                                    : $$selectedVal[0]
-                                )
-                              },
-                              _vm.onSelectChange
-                            ]
-                          }
+                          on: { change: _vm.onSelectChange }
                         },
                         [
                           _c("option", { attrs: { value: "" } }, [
@@ -509,7 +480,6 @@ function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (O
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
-//
 //
 //
 //

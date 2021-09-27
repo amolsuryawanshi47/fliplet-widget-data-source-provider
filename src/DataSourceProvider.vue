@@ -18,7 +18,6 @@
                 class="hidden-select form-control"
                 @change="onSelectChange"
                 :value="selectedDataSource ? selectedDataSource.id : ''"
-                v-model="$v.selectedValue.$model"
               >
                 <option value>-- Select data source</option>
                 <option v-if="!dataSources.length" value="none" disabled>(No data source found)</option>
