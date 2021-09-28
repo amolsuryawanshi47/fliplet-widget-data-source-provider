@@ -582,11 +582,7 @@ export default {
 
             break;
           case 'validation':
-            if (!this.$v.selectedValue.$model) {
-              this.hasError = true;
-            } else {
-              this.hasError = false;
-            }
+            this.hasError = !this.$v.selectedValue.$model;
 
             break;
           case 'update-security-rules':

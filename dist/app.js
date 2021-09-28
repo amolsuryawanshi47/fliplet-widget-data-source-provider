@@ -1046,12 +1046,7 @@ var required = window.validators.required;
             break;
 
           case 'validation':
-            if (!_this9.$v.selectedValue.$model) {
-              _this9.hasError = true;
-            } else {
-              _this9.hasError = false;
-            }
-
+            _this9.hasError = !_this9.$v.selectedValue.$model;
             break;
 
           case 'update-security-rules':
