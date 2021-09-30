@@ -189,6 +189,7 @@ var render = function() {
                     "label",
                     {
                       staticClass: "select-proxy-display",
+                      class: { "has-error": _vm.hasError },
                       attrs: { for: "data-source-select" }
                     },
                     [
@@ -563,13 +564,17 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 //
 //
 
+Vue.use(window.vuelidate["default"]);
+var required = window.validators.required;
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
       appDataSources: [],
       allDataSources: [],
       copyOfAllDataSources: [],
+      hasError: false,
       missingAccessTypes: [],
+      selectedValue: '',
       isLoading: true,
       widgetData: {},
       selectedDataSource: null,
@@ -588,6 +593,11 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
   computed: {
     showAccessRulesAlert: function showAccessRulesAlert() {
       return this.selectedDataSource && this.widgetData.accessRules && this.widgetData.accessRules.length > 0;
+    }
+  },
+  validations: {
+    selectedValue: {
+      required: required
     }
   },
   methods: {
@@ -1008,6 +1018,11 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
           _this8.onAddDefaultSecurity();
         }
       });
+    },
+    status: function status(validation) {
+      return {
+        error: validation.$error
+      };
     }
   },
   mounted: function mounted() {
@@ -1028,6 +1043,10 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
               _this9.loadSelectedDataSource(_this9.selectedDataSource.id);
             }
 
+            break;
+
+          case 'validation':
+            _this9.hasError = !_this9.$v.selectedValue.$model;
             break;
 
           case 'update-security-rules':

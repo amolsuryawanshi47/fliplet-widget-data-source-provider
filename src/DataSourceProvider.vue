@@ -12,7 +12,7 @@
       <div class="main-data-source-provider" :class="{ 'select-overlay': isLoading }">
         <section class="data-source-selector">
           <div v-if="dataSources.length || (!dataSources.length && !selectedDataSource)">
-            <label for="data-source-select" class="select-proxy-display">
+            <label for="data-source-select" class="select-proxy-display" v-bind:class="{ 'has-error': hasError }">
               <select
                 ref="select"
                 class="hidden-select form-control"
@@ -83,6 +83,9 @@
 
 <script>
 import { getDataSources, getDataSource, createDataSource, updateDataSourceSecurityRules } from './services/dataSource';
+Vue.use(window.vuelidate.default);
+
+const { required } = window.validators;
 
 export default {
   data() {
@@ -90,7 +93,9 @@ export default {
       appDataSources: [],
       allDataSources: [],
       copyOfAllDataSources: [],
+      hasError: false,
       missingAccessTypes: [],
+      selectedValue: '',
       isLoading: true,
       widgetData: {},
       selectedDataSource: null,
@@ -107,6 +112,11 @@ export default {
   computed: {
     showAccessRulesAlert: function() {
       return this.selectedDataSource && (this.widgetData.accessRules && this.widgetData.accessRules.length > 0);
+    }
+  },
+  validations: {
+    selectedValue: {
+      required
     }
   },
   methods: {
@@ -547,6 +557,11 @@ export default {
           this.onAddDefaultSecurity();
         }
       });
+    },
+    status(validation) {
+      return {
+        error: validation.$error
+      };
     }
   },
   mounted() {
@@ -564,6 +579,10 @@ export default {
             if (event.data.classes === 'data-source-overlay') {
               this.loadSelectedDataSource(this.selectedDataSource.id);
             }
+
+            break;
+          case 'validation':
+            this.hasError = !this.$v.selectedValue.$model;
 
             break;
           case 'update-security-rules':

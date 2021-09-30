@@ -14,6 +14,9 @@
       "lodash"
     ],
     "assets": [
+      "vendor/vuelidate.min.js",
+      "vendor/validators.min.js",
+      "vendor/init.js",
       "dist/css/index.css",
       "dist/app.js"
     ]
@@ -22,6 +25,10 @@
     "dependencies": [
       "fliplet-core"
     ],
-    "assets": []
+    "assets": [
+      "vendor/vuelidate.min.js",
+      "vendor/validators.min.js",
+      "vendor/init.js"
+    ]
   }
 }
