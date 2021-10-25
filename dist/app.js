@@ -1005,6 +1005,7 @@ var required = window.validators.required;
       Fliplet.Modal.confirm({
         title: 'Missing security rules',
         message: message,
+        backdrop: true,
         buttons: {
           confirm: {
             label: 'Add security rule'
