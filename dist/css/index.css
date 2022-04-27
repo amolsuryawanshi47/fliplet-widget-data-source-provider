@@ -1,55 +1,70 @@
 .create-dataSource,
 .change-dataSource {
-  cursor: pointer; }
+  cursor: pointer;
+}
 
 .container {
   overflow: hidden;
   position: relative;
   padding: 0;
-  min-width: 100%; }
+  min-width: 100%;
+}
 
 .alert {
-  margin-bottom: 0px; }
+  margin-bottom: 0px;
+}
 
 .btn-view-data-source {
   width: 100%;
-  margin-bottom: 15px; }
+  margin-bottom: 15px;
+}
 
 .select-overlay {
   opacity: 0.6;
-  pointer-events: none; }
+  pointer-events: none;
+}
 
 .spinner-container {
   position: absolute;
   top: 50%;
-  left: 50%; }
+  left: 50%;
+}
 
 .btn-security {
   width: 100%;
-  margin-top: 10px; }
+  margin-top: 10px;
+}
 
 .main-data-source-provider {
-  padding-bottom: 10px; }
+  padding-bottom: 10px;
+}
 
 .data-source-title {
-  margin-bottom: 5px; }
+  margin-bottom: 5px;
+}
 
 .change-data-source {
-  cursor: pointer; }
+  cursor: pointer;
+}
 
 .selected-data-source {
   display: flex;
-  width: 100%; }
-  .selected-data-source .info {
-    display: flex;
-    width: 80%; }
-    .selected-data-source .info code {
-      width: 20%; }
-    .selected-data-source .info span {
-      display: inline-block;
-      width: 90%;
-      overflow: hidden;
-      text-overflow: ellipsis; }
-  .selected-data-source .action {
-    display: flex;
-    width: 20%; }
+  width: 100%;
+}
+.selected-data-source .info {
+  display: flex;
+  width: 80%;
+}
+.selected-data-source .info code {
+  width: 20%;
+}
+.selected-data-source .info span {
+  display: inline-block;
+  width: 90%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.selected-data-source .action {
+  display: flex;
+  width: 20%;
+}

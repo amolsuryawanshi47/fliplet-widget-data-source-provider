@@ -152,7 +152,7 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
-var render = function() {
+var render = function () {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
@@ -162,15 +162,15 @@ var render = function() {
         _c("strong", [
           _vm._v(
             _vm._s(_vm.widgetData.dataSourceTitle || "Select a data source")
-          )
-        ])
+          ),
+        ]),
       ]),
       _vm._v(" "),
       _vm.isLoading
         ? _c("div", { staticClass: "spinner-container animated" }, [
             _c("div", { staticClass: "spinner-overlay" }, [
-              _vm._v("Loading...")
-            ])
+              _vm._v("Loading..."),
+            ]),
           ])
         : _vm._e(),
       _vm._v(" "),
@@ -178,7 +178,7 @@ var render = function() {
         "div",
         {
           staticClass: "main-data-source-provider",
-          class: { "select-overlay": _vm.isLoading }
+          class: { "select-overlay": _vm.isLoading },
         },
         [
           _c("section", { staticClass: "data-source-selector" }, [
@@ -190,7 +190,7 @@ var render = function() {
                     {
                       staticClass: "select-proxy-display",
                       class: { "has-error": _vm.hasError },
-                      attrs: { for: "data-source-select" }
+                      attrs: { for: "data-source-select" },
                     },
                     [
                       _c(
@@ -201,13 +201,13 @@ var render = function() {
                           domProps: {
                             value: _vm.selectedDataSource
                               ? _vm.selectedDataSource.id
-                              : ""
+                              : "",
                           },
-                          on: { change: _vm.onSelectChange }
+                          on: { change: _vm.onSelectChange },
                         },
                         [
                           _c("option", { attrs: { value: "" } }, [
-                            _vm._v("-- Select data source")
+                            _vm._v("-- Select data source"),
                           ]),
                           _vm._v(" "),
                           !_vm.dataSources.length
@@ -219,57 +219,60 @@ var render = function() {
                             : _vm.dataSources.length
                             ? [
                                 !!_vm.allDataSources.length
-                                  ? _vm._l(_vm.dataSources, function(group) {
+                                  ? _vm._l(_vm.dataSources, function (group) {
                                       return _c(
                                         "optgroup",
                                         {
                                           key: group.name,
-                                          attrs: { label: group.name }
+                                          attrs: { label: group.name },
                                         },
-                                        _vm._l(group.options, function(option) {
-                                          return _c(
-                                            "option",
-                                            {
-                                              key: option.id,
-                                              domProps: { value: option.id }
-                                            },
-                                            [
-                                              _vm._v(
-                                                _vm._s(
-                                                  _vm.formatDataSourceOption(
-                                                    option
+                                        _vm._l(
+                                          group.options,
+                                          function (option) {
+                                            return _c(
+                                              "option",
+                                              {
+                                                key: option.id,
+                                                domProps: { value: option.id },
+                                              },
+                                              [
+                                                _vm._v(
+                                                  _vm._s(
+                                                    _vm.formatDataSourceOption(
+                                                      option
+                                                    )
                                                   )
-                                                )
-                                              )
-                                            ]
-                                          )
-                                        }),
+                                                ),
+                                              ]
+                                            )
+                                          }
+                                        ),
                                         0
                                       )
                                     })
-                                  : _vm._l(_vm.dataSources, function(option) {
+                                  : _vm._l(_vm.dataSources, function (option) {
                                       return _c(
                                         "option",
                                         {
                                           key: option.id,
-                                          domProps: { value: option.id }
+                                          domProps: { value: option.id },
                                         },
                                         [
                                           _vm._v(
                                             _vm._s(
                                               _vm.formatDataSourceOption(option)
                                             )
-                                          )
+                                          ),
                                         ]
                                       )
-                                    })
+                                    }),
                               ]
-                            : _vm._e()
+                            : _vm._e(),
                         ],
                         2
                       ),
                       _vm._v(" "),
-                      _c("span", { staticClass: "icon fa fa-chevron-down" })
+                      _c("span", { staticClass: "icon fa fa-chevron-down" }),
                     ]
                   ),
                   _vm._v(" "),
@@ -279,11 +282,11 @@ var render = function() {
                       staticClass: "create-data-source",
                       attrs: { href: "#" },
                       on: {
-                        click: function($event) {
+                        click: function ($event) {
                           $event.preventDefault()
-                          return _vm.onDataSourceCreate($event)
-                        }
-                      }
+                          return _vm.onDataSourceCreate.apply(null, arguments)
+                        },
+                      },
                     },
                     [_vm._v("Create new data source")]
                   ),
@@ -295,21 +298,21 @@ var render = function() {
                           name: "model",
                           rawName: "v-model",
                           value: _vm.showAll,
-                          expression: "showAll"
-                        }
+                          expression: "showAll",
+                        },
                       ],
                       attrs: {
                         type: "checkbox",
                         name: "showAll",
-                        id: "showAll"
+                        id: "showAll",
                       },
                       domProps: {
                         checked: Array.isArray(_vm.showAll)
                           ? _vm._i(_vm.showAll, null) > -1
-                          : _vm.showAll
+                          : _vm.showAll,
                       },
                       on: {
-                        change: function($event) {
+                        change: function ($event) {
                           var $$a = _vm.showAll,
                             $$el = $event.target,
                             $$c = $$el.checked ? true : false
@@ -327,12 +330,12 @@ var render = function() {
                           } else {
                             _vm.showAll = $$c
                           }
-                        }
-                      }
+                        },
+                      },
                     }),
                     _vm._v(" "),
-                    _vm._m(0)
-                  ])
+                    _vm._m(0),
+                  ]),
                 ])
               : _vm.selectedDataSource && !_vm.changeDataSource
               ? _c("div", [
@@ -340,7 +343,7 @@ var render = function() {
                     _c("div", { staticClass: "selected-data-source info" }, [
                       _c("code", [_vm._v(_vm._s(_vm.selectedDataSource.id))]),
                       _vm._v(" "),
-                      _c("span", [_vm._v(_vm._s(_vm.selectedDataSource.name))])
+                      _c("span", [_vm._v(_vm._s(_vm.selectedDataSource.name))]),
                     ]),
                     _vm._v(" "),
                     _c(
@@ -349,15 +352,15 @@ var render = function() {
                         staticClass:
                           "change-data-source selected-data-source action",
                         on: {
-                          click: function($event) {
+                          click: function ($event) {
                             $event.preventDefault()
-                            return _vm.onDataSourceChange($event)
-                          }
-                        }
+                            return _vm.onDataSourceChange.apply(null, arguments)
+                          },
+                        },
                       },
                       [_vm._v("Change")]
-                    )
-                  ])
+                    ),
+                  ]),
                 ])
               : _vm._e(),
             _vm._v(" "),
@@ -369,11 +372,11 @@ var render = function() {
                     name: "show",
                     rawName: "v-show",
                     value: _vm.selectedDataSource,
-                    expression: "selectedDataSource"
-                  }
+                    expression: "selectedDataSource",
+                  },
                 ],
                 staticClass: "btn btn-default btn-view-data-source",
-                on: { click: _vm.viewDataSource }
+                on: { click: _vm.viewDataSource },
               },
               [_vm._v("\n          View data source\n        ")]
             ),
@@ -386,10 +389,10 @@ var render = function() {
                     name: "show",
                     rawName: "v-show",
                     value: _vm.showAccessRulesAlert,
-                    expression: "showAccessRulesAlert"
-                  }
+                    expression: "showAccessRulesAlert",
+                  },
                 ],
-                staticClass: "security-notify"
+                staticClass: "security-notify",
               },
               [
                 !_vm.securityEnabled
@@ -399,17 +402,17 @@ var render = function() {
                       _c("p", [
                         _vm._v(
                           "Configure security rules so the app can access the data"
-                        )
+                        ),
                       ]),
                       _vm._v(" "),
                       _c(
                         "div",
                         {
                           staticClass: "btn btn-primary btn-security",
-                          on: { click: _vm.onAddDefaultSecurity }
+                          on: { click: _vm.onAddDefaultSecurity },
                         },
                         [_vm._v("Configure security rules")]
-                      )
+                      ),
                     ])
                   : _vm.securityAdded
                   ? _c("div", { staticClass: "alert alert-success" }, [
@@ -417,37 +420,37 @@ var render = function() {
                         "\n            Security rules added. To manage security rules click "
                       ),
                       _c("b", [_vm._v("View data source")]),
-                      _vm._v(" above.\n          ")
+                      _vm._v(" above.\n          "),
                     ])
-                  : _vm._e()
+                  : _vm._e(),
               ]
-            )
-          ])
+            ),
+          ]),
         ]
-      )
-    ])
+      ),
+    ]),
   ])
 }
 var staticRenderFns = [
-  function() {
+  function () {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("label", { attrs: { for: "showAll" } }, [
       _c("span", { staticClass: "check" }, [
-        _c("i", { staticClass: "fa fa-check" })
+        _c("i", { staticClass: "fa fa-check" }),
       ]),
-      _vm._v("\n              Show all data sources\n            ")
+      _vm._v("\n              Show all data sources\n            "),
     ])
   },
-  function() {
+  function () {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("p", [
-      _c("b", [_vm._v("This data source is missing security rules.")])
+      _c("b", [_vm._v("This data source is missing security rules.")]),
     ])
-  }
+  },
 ]
 render._withStripped = true
 
@@ -476,9 +479,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 
 //
 //
@@ -1131,7 +1134,7 @@ function _toConsumableArray(arr) {
   return arrayWithoutHoles(arr) || iterableToArray(arr) || unsupportedIterableToArray(arr) || nonIterableSpread();
 }
 
-module.exports = _toConsumableArray;
+module.exports = _toConsumableArray, module.exports.__esModule = true, module.exports["default"] = module.exports;
 
 /***/ }),
 /* 7 */
@@ -1143,7 +1146,7 @@ function _arrayWithoutHoles(arr) {
   if (Array.isArray(arr)) return arrayLikeToArray(arr);
 }
 
-module.exports = _arrayWithoutHoles;
+module.exports = _arrayWithoutHoles, module.exports.__esModule = true, module.exports["default"] = module.exports;
 
 /***/ }),
 /* 8 */
@@ -1159,17 +1162,17 @@ function _arrayLikeToArray(arr, len) {
   return arr2;
 }
 
-module.exports = _arrayLikeToArray;
+module.exports = _arrayLikeToArray, module.exports.__esModule = true, module.exports["default"] = module.exports;
 
 /***/ }),
 /* 9 */
 /***/ (function(module, exports) {
 
 function _iterableToArray(iter) {
-  if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);
+  if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter);
 }
 
-module.exports = _iterableToArray;
+module.exports = _iterableToArray, module.exports.__esModule = true, module.exports["default"] = module.exports;
 
 /***/ }),
 /* 10 */
@@ -1186,7 +1189,7 @@ function _unsupportedIterableToArray(o, minLen) {
   if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return arrayLikeToArray(o, minLen);
 }
 
-module.exports = _unsupportedIterableToArray;
+module.exports = _unsupportedIterableToArray, module.exports.__esModule = true, module.exports["default"] = module.exports;
 
 /***/ }),
 /* 11 */
@@ -1196,7 +1199,7 @@ function _nonIterableSpread() {
   throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }
 
-module.exports = _nonIterableSpread;
+module.exports = _nonIterableSpread, module.exports.__esModule = true, module.exports["default"] = module.exports;
 
 /***/ }),
 /* 12 */
@@ -1217,7 +1220,7 @@ function _defineProperty(obj, key, value) {
   return obj;
 }
 
-module.exports = _defineProperty;
+module.exports = _defineProperty, module.exports.__esModule = true, module.exports["default"] = module.exports;
 
 /***/ }),
 /* 13 */
