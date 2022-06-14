@@ -4,6 +4,7 @@ export const getDataSources = appId => {
   if (appId) {
     getOptions.appId = appId;
     getOptions.includeInUse = true;
+    getOptions.excludeTypes = 'bookmarks,likes,comments';
   }
 
   return Fliplet.DataSources.get(getOptions);
