@@ -1241,7 +1241,7 @@ var getDataSources = function getDataSources(appId) {
   if (appId) {
     getOptions.appId = appId;
     getOptions.includeInUse = true;
-    getOptions.excludeTypes = 'bookmarks,likes,comments';
+    getOptions.excludeTypes = 'bookmarks,likes,comments,menu';
   }
 
   return Fliplet.DataSources.get(getOptions);
