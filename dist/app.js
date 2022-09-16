@@ -123,7 +123,7 @@ var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_
   null,
   null,
   null
-
+  
 )
 
 /* hot reload */
@@ -463,7 +463,7 @@ render._withStripped = true
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_3_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DataSourceProvider_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5);
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_3_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DataSourceProvider_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]);
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_3_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DataSourceProvider_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
 
 /***/ }),
 /* 5 */
@@ -1297,20 +1297,19 @@ __webpack_require__.r(__webpack_exports__);
 // This module is a runtime utility for cleaner component module output and will
 // be included in the final webpack user bundle.
 
-function normalizeComponent (
+function normalizeComponent(
   scriptExports,
   render,
   staticRenderFns,
   functionalTemplate,
   injectStyles,
   scopeId,
-  moduleIdentifier, /* server only */
+  moduleIdentifier /* server only */,
   shadowMode /* vue-cli only */
 ) {
   // Vue.extend constructor export interop
-  var options = typeof scriptExports === 'function'
-    ? scriptExports.options
-    : scriptExports
+  var options =
+    typeof scriptExports === 'function' ? scriptExports.options : scriptExports
 
   // render functions
   if (render) {
@@ -1330,7 +1329,8 @@ function normalizeComponent (
   }
 
   var hook
-  if (moduleIdentifier) { // server build
+  if (moduleIdentifier) {
+    // server build
     hook = function (context) {
       // 2.3 injection
       context =
@@ -1356,11 +1356,11 @@ function normalizeComponent (
   } else if (injectStyles) {
     hook = shadowMode
       ? function () {
-        injectStyles.call(
-          this,
-          (options.functional ? this.parent : this).$root.$options.shadowRoot
-        )
-      }
+          injectStyles.call(
+            this,
+            (options.functional ? this.parent : this).$root.$options.shadowRoot
+          )
+        }
       : injectStyles
   }
 
@@ -1371,16 +1371,14 @@ function normalizeComponent (
       options._injectStyles = hook
       // register for functional component in vue file
       var originalRender = options.render
-      options.render = function renderWithStyleInjection (h, context) {
+      options.render = function renderWithStyleInjection(h, context) {
         hook.call(context)
         return originalRender(h, context)
       }
     } else {
       // inject component registration as beforeCreate hook
       var existing = options.beforeCreate
-      options.beforeCreate = existing
-        ? [].concat(existing, hook)
-        : [hook]
+      options.beforeCreate = existing ? [].concat(existing, hook) : [hook]
     }
   }
 
